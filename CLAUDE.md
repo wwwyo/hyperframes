@@ -4,6 +4,8 @@ Open-source video rendering framework: write HTML, render video.
 
 ## Skills
 
+> **This checkout is the source repo, not a consumer project.** Its skills already live in `skills/<name>/` — read them there. Do **not** run `hyperframes skills`, `hyperframes skills update`, or `npx skills add` here: the CLI hardcodes `--global` (`--dir` scopes only the prune), so it installs the published `heygen-com/hyperframes` set into the dotfiles-managed `~/.claude/skills` / `~/.agents/skills` even when the cwd is this repo. The router's install instructions are superseded by this rule; treat this checkout as a plugin installation and follow `skills/hyperframes/references/plugin-installation.md`, and pass `HYPERFRAMES_SKIP_SKILLS=1` when running `init`.
+
 This repo ships 21 AI agent skills via [vercel-labs/skills](https://github.com/vercel-labs/skills). Install them before writing compositions — they encode framework-specific patterns that generic docs don't cover. **Default to the core set**: the `/hyperframes` router installs each creation workflow on demand; install all 21 only when the user explicitly asks for the full set.
 
 ```bash

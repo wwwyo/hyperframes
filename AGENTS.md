@@ -4,13 +4,9 @@ Open-source video rendering framework: write HTML, render video.
 
 ## Skills
 
-This repo ships AI agent skills via [vercel-labs/skills](https://github.com/vercel-labs/skills). Install them before writing compositions — they encode framework-specific patterns that generic docs don't cover. **Default to the core set** — the `/hyperframes` router installs each creation workflow on demand; install everything only when the user explicitly asks for the full set.
+This is the HyperFrames **source checkout** (and plugin root), not a consumer project — the skills it ships already live in `skills/<name>/`. Read them from there before writing compositions; add only the workflow the task needs.
 
-```bash
-npx hyperframes skills update           # default: installs/refreshes the core set — workflows install on demand
-npx hyperframes skills                  # all 21 published skills at once
-npx skills add heygen-com/hyperframes   # interactive picker (terminal only; repo-internal skills are excluded by default)
-```
+Do **not** run `hyperframes skills`, `hyperframes skills update`, or `npx skills add` here. The CLI hardcodes `--global` (`--dir` scopes only the prune), so it installs the **published upstream** `heygen-com/hyperframes` set into `~/.claude/skills` and `~/.agents/skills` — the dotfiles-managed global stores — even when the cwd is this repo, leaving dotfiles with a large unexpected diff. The router's install/update instructions are superseded by this local rule. Treat this checkout as a plugin installation and follow `skills/hyperframes/references/plugin-installation.md`; pass `HYPERFRAMES_SKIP_SKILLS=1` when running `init`.
 
 **Creation workflows** route through one entry skill — read `/hyperframes` first: it orients you to the whole surface, confirms the brief up front (the intent layer), and maps "make me a…" intent — usually a video, but also a navigable deck (`/slideshow`) or a composition port (`/remotion-to-hyperframes`) — to a concrete workflow. Consult it before invoking a specific workflow:
 
