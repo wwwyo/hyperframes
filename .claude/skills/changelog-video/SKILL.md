@@ -79,10 +79,10 @@ Save as `script-tokens.json` in the project.
 ```bash
 # spoken-layer text only; words JSON = ground-truth timestamps of the SPOKEN text
 # Repo-native path: the changelog-video skill runs from the hyperframes repo root,
-# so it uses the tracked hyperframes-media TTS helper directly (no `npx hyperframes
+# so it uses the tracked media-use TTS helper directly (no `npx hyperframes
 # skills` install step). If you've copied the skill into another repo, swap in
-# your own path to the media-use / hyperframes-media heygen-tts.mjs.
-node skills/hyperframes-media/scripts/heygen-tts.mjs ./vo-spoken.txt \
+# your own path to the media-use heygen-tts.mjs.
+node skills/media-use/audio/scripts/heygen-tts.mjs ./vo-spoken.txt \
   -o voiceover.mp3 --words vo-words.json \
   --voice 330290724a1b470fb63153f34d4c0183   # Annie — lifelike (do not substitute)
 ```

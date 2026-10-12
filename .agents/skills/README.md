@@ -35,7 +35,7 @@ Weekly usage:
 3. Accept, and the agent produces `weekly-changelog-<range>.mp4` gated
    by `hyperframes check` (0 errors) + `seam-gate verify` (0 fail/warn).
 
-TTS uses the tracked `skills/hyperframes-media/scripts/heygen-tts.mjs`
+TTS uses the tracked `skills/media-use/audio/scripts/heygen-tts.mjs`
 (no extra install needed). Runtime dependencies you need on PATH:
 
 - Node ≥ 22

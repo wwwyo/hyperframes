@@ -37,7 +37,12 @@ bun run test    # Run all tests
 Packages load each other through their `exports`. Under Node, core, parsers,
 lint and studio-server resolve to `dist/`, and player always loads its built
 bundle. Run `bun run build` once in a fresh worktree, before any package's
-tests or typecheck. After editing a package that another package imports, run
+tests or typecheck. Run `bun install` before the first commit there too: git
+worktrees share the main checkout's `.git/hooks`, so lefthook is already active
+before dependencies exist and the `commit-msg` hook fails resolving
+`@commitlint/config-conventional`. Do not fall back to `git commit --no-verify`
+— it also skips the pre-commit lint, format, and tracked-artifacts gates.
+After editing a package that another package imports, run
 that package's `build` again before the dependent package's tests. Core's
 `src/generated/` is git-ignored build output: if you see
 `Cannot find module '../generated/runtime-inline'`, run
