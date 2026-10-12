@@ -2,7 +2,7 @@
 
 Applies to the narrated, story-driven creation workflows — `/product-launch-video`, `/pr-to-video`, `/faceless-explainer`, and `/general-video` when the piece tells a story. It does **not** apply to `/music-to-video` (the track drives the arc), `/motion-graphics` (no narration — motion is the message), `/embedded-captions` and `/talking-head-recut` (the footage's story is already fixed), or `/slideshow` (the presenter owns the story). Do not force these rules onto an exempt workflow.
 
-Each workflow's own story-design reference owns its archetypes, beat sequences, and frame vocabulary. This file owns four cross-workflow rules about **order** and **justification** — the reverse iceberg: lead with why it's valuable, not with what it is or how it was made.
+Each workflow's own story-design reference owns its archetypes, beat sequences, and frame vocabulary. This file owns five cross-workflow rules about **order** and **justification** — the reverse iceberg: lead with why it's valuable, not with what it is or how it was made.
 
 ## 1. The hook speaks the viewer's language
 
@@ -43,3 +43,11 @@ The proposal shape — echo line → frame table → style / duration footer →
 When the piece derives from concrete source material — a PR, a repo, an article, a product page — mine that material for the visual vocabulary before inventing any: its phrases, entities, verbs, and recurring motifs are the props. Each frame's key visual should be traceable to a specific line of the source, the same way its **Why** traces to the message: real filenames over generic file icons, the product's own numbers over invented ones, the article's own metaphor over a stock one.
 
 Self-check per visual: if the prop could appear unchanged in another product's video, it didn't come from the source. Swap it for something only this subject could produce before decorating it.
+
+## 5. A reversal must resolve into a replacement frame
+
+When the piece corrects a belief — a counterintuitive hook, a story-explainer turn, a fix-explainer's bug — the turn is not "and it's actually the opposite." A bare denial leaves the viewer with nothing to hold: the piece reads as a list of facts with a contradiction dropped in, and the climax lands weak.
+
+Design the turn as **setup → assumption → reversal → reframe**: the reversal hands back a new frame that explains the same facts better ("it's not X — it's Y, which is why Z"). That replacement frame is the payoff; the value claim (rule 2) should ride on it, not on the facts it overturns.
+
+Self-check: cover the reversal and read the rest. If the viewer still holds the old belief, the turn denied without reframing. A reframe weaker than the misconception it corrects is a turn to redesign, not to decorate.
