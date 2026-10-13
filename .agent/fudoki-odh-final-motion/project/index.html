@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>風土記 ODH 動画① 読めない</title>
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Noto Sans JP";
+        src: url("assets/fonts/NotoSansJP.ttf") format("truetype");
+        font-weight: 100 900;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "Garble";
+        src: local("HiraginoSansGB-W6");
+        unicode-range: U+3400-4DBF;
+      }
+      @font-face {
+        font-family: "Garble";
+        src: url("assets/fonts/garble/AppleSymbols.ttf") format("truetype");
+        unicode-range: U+2972, U+2ACB, U+2674, U+2925;
+      }
+      @font-face {
+        font-family: "Garble";
+        src: url("assets/fonts/garble/STIXTwoMath.otf") format("opentype");
+        unicode-range: U+269F;
+      }
+      @font-face {
+        font-family: "Garble";
+        src: local("NotoSansTaiTham");
+        unicode-range: U+1A70-1A7F;
+      }
+      @font-face {
+        font-family: "Garble";
+        src: local("NotoSansMyanmar-Regular");
+        unicode-range: U+1000-109F;
+      }
+      @font-face {
+        font-family: "Garble";
+        src: local("NotoSansMongolian-Regular");
+        unicode-range: U+1800-18AF;
+      }
+      @font-face {
+        font-family: "Garble";
+        src: local("EuphemiaUCAS");
+        unicode-range: U+1400-167F;
+      }
+      @font-face {
+        font-family: "Garble";
+        src: local("ZapfDingbatsITC");
+        unicode-range: U+27BC;
+      }
+      @font-face {
+        font-family: "Garble";
+        src: local("KefaIII-Regular");
+        unicode-range: U+1200-137F;
+      }
+      @font-face {
+        font-family: "Garble";
+        src: local("LaoMN");
+        unicode-range: U+0E80-0EFF;
+      }
+      @font-face {
+        font-family: "Garble";
+        src: local("SourceHanCodeJP-Regular");
+        unicode-range: U+3200-32FF;
+      }
+      :root {
+        --paper: #ffffff;
+        --sheet: #fffdf8;
+        --ink: #0a0a0a;
+        --muted: #6b6b6b;
+        --rule: #d8d2c2;
+        --red: #c1553a;
+        --blue: #2c5a85;
+        --gray: #7d7d7d;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        background: var(--paper);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--paper);
+        font-family: "Noto Sans JP", sans-serif;
+        color: #0a0a0a;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+      }
+      .abs {
+        position: absolute;
+        display: block;
+      }
+      .sheet {
+        position: absolute;
+        background: #fffdf8;
+        box-shadow:
+          0 1px 0 rgba(10, 10, 10, 0.06),
+          0 14px 34px rgba(60, 50, 30, 0.14);
+      }
+      .sheet img {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      .label {
+        position: absolute;
+        white-space: nowrap;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+      .chip {
+        position: absolute;
+        white-space: nowrap;
+        font-weight: 800;
+        line-height: 1;
+        background: #fffdf8;
+        border-style: solid;
+      }
+      svg {
+        overflow: visible;
+      }
+
+      /* 3a */
+      #a-text {
+        left: 1010px;
+        top: 742px;
+        width: 860px;
+        font-size: 92px;
+        font-weight: 800;
+        line-height: 1.22;
+        letter-spacing: 0.01em;
+      }
+      #a-text .line {
+        display: block;
+        white-space: nowrap;
+      }
+      #a-text .ch {
+        display: inline-block;
+      }
+      #a-t2 {
+        display: inline-block;
+        color: #c1553a;
+      }
+      #a-dots {
+        display: inline-block;
+      }
+      #a-pdf {
+        overflow: hidden;
+      }
+
+      /* 3b */
+      .b-caption {
+        font-size: 60px;
+      }
+      #b-panel {
+        position: absolute;
+        left: 1404px;
+        top: 220px;
+        width: 436px;
+        height: 580px;
+        background: #fffdf8;
+        border: 2px solid #d8d2c2;
+        border-radius: 14px;
+      }
+      #b-panel-head {
+        position: absolute;
+        left: 28px;
+        top: 22px;
+        font-size: 28px;
+        font-weight: 700;
+        color: #6b6b6b;
+        white-space: nowrap;
+      }
+      .g-line {
+        position: absolute;
+        left: 28px;
+        width: 390px;
+      }
+      .g-text {
+        display: block;
+        font-family: "Garble", "Noto Sans JP", sans-serif;
+        font-size: 58px;
+        line-height: 1.1;
+        font-weight: 400;
+        white-space: nowrap;
+        color: #0a0a0a;
+      }
+      .g-orig {
+        display: block;
+        margin-top: 16px;
+        font-size: 26px;
+        line-height: 1.2;
+        font-weight: 600;
+        color: #6b6b6b;
+        white-space: nowrap;
+      }
+      #b-nonum {
+        left: 700px;
+        top: 840px;
+        font-size: 64px;
+        color: #c1553a;
+      }
+      .hl {
+        position: absolute;
+        background: rgba(44, 90, 133, 0.22);
+        border-radius: 3px;
+      }
+      #b-copy {
+        position: absolute;
+        padding: 10px 18px;
+        background: #0a0a0a;
+        color: #fffdf8;
+        font-size: 30px;
+        font-weight: 700;
+        border-radius: 10px;
+        white-space: nowrap;
+      }
+      #b-marquee {
+        position: absolute;
+        border: 3px dashed #2c5a85;
+        background: rgba(44, 90, 133, 0.1);
+      }
+
+      /* 3e */
+      .tile {
+        position: absolute;
+        width: 128px;
+        height: 180px;
+        background: #fffdf8;
+        border: 1px solid #dcd6c6;
+        overflow: hidden;
+      }
+      .tile img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 0%;
+      }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-hltt" id="root" data-composition-id="fudoki-odh-v1" data-start="0" data-width="1920" data-height="1080" data-duration="44.4" data-fps="30">
+      <!-- ============ 3a ============ -->
+      <div data-hf-id="hf-fda1" id="s3a" class="scene">
+        <div data-hf-id="hf-pkcm" id="a-shake" class="scene">
+          <div data-hf-id="hf-wcb0" id="a-pdf" class="sheet" style="left: 300px; top: 128px; width: 580px; height: 820px">
+            <img data-hf-id="hf-al78" src="assets/img/pdf-3a.png" alt="">
+            <div data-hf-id="hf-r0yy" id="a-scanband" class="abs" style="left: 0; top: 0; width: 580px; height: 90px"></div>
+          </div>
+          <svg data-hf-id="hf-s2ml" id="a-beam" class="abs" style="left: 0; top: 0" width="1920" height="1080" viewBox="0 0 1920 1080">
+            <polygon data-hf-id="hf-ia0d" id="a-beam-poly" points="1112,330 880,150 880,520" fill="rgba(10,10,10,0.07)" />
+          </svg>
+          <div data-hf-id="hf-4ikf" id="a-robot" class="abs" style="left: 1060px; top: 150px; width: 400px; height: 460px">
+            <svg data-hf-id="hf-la86" width="400" height="460" viewBox="0 0 400 460">
+              <line data-hf-id="hf-qfoi" x1="200" y1="46" x2="200" y2="86" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round" />
+              <circle data-hf-id="hf-lv6d" cx="200" cy="34" r="15" fill="#0a0a0a" />
+              <rect data-hf-id="hf-u1lk" x="34" y="150" width="26" height="72" rx="10" fill="#0a0a0a" />
+              <rect data-hf-id="hf-85ig" x="340" y="150" width="26" height="72" rx="10" fill="#0a0a0a" />
+              <rect data-hf-id="hf-qn9f" x="60" y="86" width="280" height="206" rx="52" fill="#fffdf8" stroke="#0a0a0a" stroke-width="12" />
+              <rect data-hf-id="hf-t688" x="94" y="126" width="212" height="122" rx="34" fill="#0a0a0a" />
+              <g data-hf-id="hf-svkf" id="a-eyes">
+                <rect data-hf-id="hf-sbru" id="a-eye-l" x="138" y="166" width="34" height="42" rx="17" fill="#fffdf8" />
+                <rect data-hf-id="hf-0rje" id="a-eye-r" x="226" y="166" width="34" height="42" rx="17" fill="#fffdf8" />
+              </g>
+              <rect data-hf-id="hf-7h1q" x="172" y="292" width="56" height="26" fill="#0a0a0a" />
+              <rect data-hf-id="hf-x6gn" x="92" y="318" width="216" height="126" rx="40" fill="#fffdf8" stroke="#0a0a0a" stroke-width="12" />
+              <rect data-hf-id="hf-4q83" x="150" y="360" width="100" height="14" rx="7" fill="#0a0a0a" />
+              <rect data-hf-id="hf-sdpf" x="150" y="390" width="62" height="14" rx="7" fill="#0a0a0a" />
+            </svg>
+          </div>
+          <svg data-hf-id="hf-8tco" id="a-x" class="abs" style="left: 640px; top: 170px" width="600" height="600" viewBox="0 0 600 600">
+            <line data-hf-id="hf-x6fp" x1="70" y1="70" x2="530" y2="530" stroke="#c1553a" stroke-width="70" stroke-linecap="round" />
+            <line data-hf-id="hf-erz1" x1="530" y1="70" x2="70" y2="530" stroke="#c1553a" stroke-width="70" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div data-hf-id="hf-qbh5" id="a-text" class="abs">
+          <span data-hf-id="hf-1pf2" class="line" id="a-l1"></span>
+          <span data-hf-id="hf-xrb1" class="line" id="a-l2"><span data-hf-id="hf-rlrk" id="a-dots"></span><span data-hf-id="hf-v9s2" id="a-t2"></span></span>
+        </div>
+      </div>
+
+      <!-- ============ 3b ============ -->
+      <div data-hf-id="hf-jbe2" id="s3b" class="scene">
+        <div data-hf-id="hf-rj81" id="b-left" class="abs" style="left: 0; top: 0; width: 680px; height: 1080px">
+          <div data-hf-id="hf-xrd4" id="b-scan" class="sheet" style="left: 80px; top: 220px; width: 560px; height: 396px">
+            <img data-hf-id="hf-m3vo" src="assets/img/scan-empty.png" alt="">
+          </div>
+          <div data-hf-id="hf-e83r" id="b-marquee" style="left: 150px; top: 300px; width: 10px; height: 10px"></div>
+          <div data-hf-id="hf-wm2g" id="b-cap-l" class="label b-caption" style="left: 80px; top: 640px">テキストがない</div>
+        </div>
+        <div data-hf-id="hf-mmuq" id="b-right" class="abs" style="left: 0; top: 0; width: 1920px; height: 1080px">
+          <div data-hf-id="hf-qwir" id="b-table" class="sheet" style="left: 700px; top: 220px; width: 660px; height: 332px">
+            <img data-hf-id="hf-i0wu" src="assets/img/garbled-print.png" alt="">
+          </div>
+          <div data-hf-id="hf-nnqb" id="b-hls" class="abs" style="left: 700px; top: 220px; width: 660px; height: 332px"></div>
+          <div data-hf-id="hf-7evj" id="b-cap-r" class="label b-caption" style="left: 700px; top: 640px">あっても文字化け</div>
+          <div data-hf-id="hf-2gpo" id="b-panel">
+            <div data-hf-id="hf-y6gx" id="b-panel-head">貼り付けると</div>
+          </div>
+          <div data-hf-id="hf-tlez" id="b-nonum" class="label">金額の数字は、1つも出てこない</div>
+          <div data-hf-id="hf-7lym" id="b-copy">コピー</div>
+        </div>
+        <svg data-hf-id="hf-19yz" id="b-cursor" class="abs" style="left: 0; top: 0" width="34" height="64" viewBox="0 0 34 64">
+          <path data-hf-id="hf-xeov" d="M5 4 H29 M17 4 V60 M5 60 H29" stroke="#fffdf8" stroke-width="11" stroke-linecap="round" fill="none" />
+          <path data-hf-id="hf-agar" d="M5 4 H29 M17 4 V60 M5 60 H29" stroke="#0a0a0a" stroke-width="5" stroke-linecap="round" fill="none" />
+        </svg>
+      </div>
+
+      <!-- ============ 3c ============ -->
+      <div data-hf-id="hf-n9i3" id="s3c" class="scene">
+        <div data-hf-id="hf-2k2n" id="c-spread" class="abs" style="left: 0; top: 0; width: 3076px; height: 1674px; transform-origin: 0 0">
+          <div data-hf-id="hf-mabt" class="sheet" style="left: 0; top: 0; width: 1515px; height: 1674px">
+            <img data-hf-id="hf-o75p" src="assets/img/a-220.png" alt="">
+          </div>
+          <div data-hf-id="hf-ydia" class="sheet" style="left: 1561px; top: 0; width: 1515px; height: 1674px">
+            <img data-hf-id="hf-z3ys" src="assets/img/a-221.png" alt="">
+          </div>
+          <svg data-hf-id="hf-k2cq" class="abs" style="left: 0; top: 0" width="3076" height="1674" viewBox="0 0 3076 1674">
+            <rect data-hf-id="hf-r5eo" id="c-gray" x="30" y="324" width="1449" height="1338" fill="rgba(125,125,125,0.06)" stroke="#7d7d7d" stroke-width="10" pathLength="1" />
+            <rect data-hf-id="hf-fuih" id="c-red" x="18" y="254" width="1473" height="64" fill="rgba(193,85,58,0.12)" stroke="#c1553a" stroke-width="12" pathLength="1" />
+            <rect data-hf-id="hf-gsj4" id="c-blue" x="2001" y="364" width="1056" height="550" fill="rgba(44,90,133,0.10)" stroke="#2c5a85" stroke-width="12" pathLength="1" />
+            <path data-hf-id="hf-ha6b" id="c-arrow" d="M1491 286 C 1700 286, 1820 300, 1975 380" fill="none" stroke="#c1553a" stroke-width="14" stroke-linecap="round" pathLength="1" />
+            <polygon data-hf-id="hf-uov9" id="c-arrowhead" points="1999,392 1946,397 1968,350" fill="#c1553a" />
+          </svg>
+          <div data-hf-id="hf-q8ks" id="c-lab-red" class="chip" style="left: 120px; top: 470px; font-size: 104px; color: #c1553a; border-width: 8px; border-color: #c1553a; padding: 22px 30px">目の名前だけ</div>
+          <div data-hf-id="hf-phws" id="c-lab-gray" class="chip" style="left: 470px; top: 1080px; font-size: 96px; color: #6b6b6b; border-width: 8px; border-color: #7d7d7d; padding: 20px 28px">下は空白</div>
+          <div data-hf-id="hf-aj1e" id="c-lab-blue" class="chip" style="left: 1640px; top: 960px; font-size: 96px; color: #2c5a85; border-width: 8px; border-color: #2c5a85; padding: 20px 28px">中身の事業はここにだけ</div>
+        </div>
+      </div>
+
+      <!-- ============ 3c-2 ============ -->
+      <div data-hf-id="hf-fciz" id="s3c2" class="scene">
+        <div data-hf-id="hf-x6xj" id="v-cam" class="abs" style="left: 0; top: 0; width: 3525px; height: 1139px; transform-origin: 0 0">
+          <div data-hf-id="hf-fh2i" class="sheet" style="left: 0; top: 0; width: 3525px; height: 354px">
+            <img data-hf-id="hf-vpyq" src="assets/img/b31-head.png" alt="">
+          </div>
+          <div data-hf-id="hf-juv0" class="sheet" style="left: 0; top: 368px; width: 3525px; height: 771px">
+            <img data-hf-id="hf-d0wb" src="assets/img/b31-rows.png" alt="">
+          </div>
+          <svg data-hf-id="hf-rdo6" class="abs" style="left: 0; top: 0" width="3525" height="1139" viewBox="0 0 3525 1139">
+            <rect data-hf-id="hf-ksrj" id="v-h0" x="1845" y="465" width="132" height="50" rx="6" fill="rgba(44,90,133,0.20)" />
+            <rect data-hf-id="hf-0v10" id="v-h1" x="2125" y="465" width="165" height="50" rx="6" fill="rgba(44,90,133,0.20)" />
+            <rect data-hf-id="hf-a9kg" id="v-h2" x="2357" y="465" width="134" height="50" rx="6" fill="rgba(44,90,133,0.20)" />
+            <rect data-hf-id="hf-xhaw" id="v-h3" x="2790" y="465" width="118" height="50" rx="6" fill="rgba(44,90,133,0.20)" />
+            <rect data-hf-id="hf-9qz6" id="v-redbox" x="2899" y="460" width="556" height="401" fill="rgba(193,85,58,0.08)" stroke="#c1553a" stroke-width="10" pathLength="1" />
+            <line data-hf-id="hf-fp3f" id="v-blue" x1="1851" y1="518" x2="2918" y2="518" stroke="#2c5a85" stroke-width="13" stroke-linecap="round" pathLength="1" />
+            <polygon data-hf-id="hf-zrbx" id="v-bluehead" points="2948,518 2908,496 2908,540" fill="#2c5a85" />
+            <line data-hf-id="hf-8q3c" id="v-red" x1="3490" y1="470" x2="3490" y2="826" stroke="#c1553a" stroke-width="13" stroke-linecap="round" pathLength="1" />
+            <polygon data-hf-id="hf-c6ar" id="v-redhead" points="3490,860 3466,818 3514,818" fill="#c1553a" />
+          </svg>
+        </div>
+        <div data-hf-id="hf-vcdf" id="v-lab-blue" class="label" style="left: 282px; top: 952px; font-size: 64px; color: #2c5a85">→ 横に読む</div>
+        <div data-hf-id="hf-tx2t" id="v-lab-red" class="label" style="left: 1236px; top: 952px; font-size: 64px; color: #c1553a">↓ 急に縦読み</div>
+      </div>
+
+      <!-- ============ 3d ============ -->
+      <div data-hf-id="hf-zs0k" id="s3d" class="scene">
+        <div data-hf-id="hf-dksk" id="d-A" class="abs" style="left: 0; top: 0; width: 3076px; height: 1674px; transform-origin: 0 0">
+          <div data-hf-id="hf-jsn1" class="sheet" style="left: 0; top: 0; width: 1515px; height: 1674px">
+            <img data-hf-id="hf-d07l" src="assets/img/a-220.png" alt="">
+          </div>
+          <div data-hf-id="hf-w4p2" class="sheet" style="left: 1561px; top: 0; width: 1515px; height: 1674px">
+            <img data-hf-id="hf-bylo" src="assets/img/a-221.png" alt="">
+          </div>
+          <svg data-hf-id="hf-hqjy" class="abs" style="left: 0; top: 0" width="3076" height="1674" viewBox="0 0 3076 1674">
+            <rect data-hf-id="hf-f8x8" id="dA-red" x="18" y="254" width="1473" height="64" fill="rgba(193,85,58,0.12)" stroke="#c1553a" stroke-width="22" pathLength="1" />
+            <rect data-hf-id="hf-elx7" id="dA-blue" x="2001" y="364" width="1056" height="550" fill="rgba(44,90,133,0.10)" stroke="#2c5a85" stroke-width="22" pathLength="1" />
+          </svg>
+          <div data-hf-id="hf-4t31" id="dA-tag-red" class="chip" style="left: 40px; top: 360px; font-size: 180px; color: #c1553a; border-width: 16px; border-color: #c1553a; padding: 26px 40px">目</div>
+          <div data-hf-id="hf-6789" id="dA-tag-blue" class="chip" style="left: 2001px; top: 960px; font-size: 180px; color: #2c5a85; border-width: 16px; border-color: #2c5a85; padding: 26px 40px">事業</div>
+        </div>
+        <div data-hf-id="hf-g866" id="d-B" class="abs" style="left: 0; top: 0; width: 3471px; height: 2271px; transform-origin: 0 0">
+          <div data-hf-id="hf-yuk4" class="sheet" style="left: 0; top: 0; width: 3471px; height: 2271px">
+            <img data-hf-id="hf-sitq" src="assets/img/b32.png" alt="">
+          </div>
+          <svg data-hf-id="hf-d63e" class="abs" style="left: 0; top: 0" width="3471" height="2271" viewBox="0 0 3471 2271">
+            <rect data-hf-id="hf-ufaq" id="dB-red" x="399" y="1035" width="1311" height="75" fill="rgba(193,85,58,0.12)" stroke="#c1553a" stroke-width="22" pathLength="1" />
+            <rect data-hf-id="hf-0ql9" id="dB-blue" x="2895" y="1110" width="561" height="1146" fill="rgba(44,90,133,0.10)" stroke="#2c5a85" stroke-width="22" pathLength="1" />
+          </svg>
+          <div data-hf-id="hf-jgx1" id="dB-tag-red" class="chip" style="left: 420px; top: 1180px; font-size: 180px; color: #c1553a; border-width: 16px; border-color: #c1553a; padding: 26px 40px">目</div>
+          <div data-hf-id="hf-y80i" id="dB-tag-blue" class="chip" style="left: 2240px; top: 1960px; font-size: 180px; color: #2c5a85; border-width: 16px; border-color: #2c5a85; padding: 26px 40px">事業</div>
+        </div>
+        <div data-hf-id="hf-qb93" id="d-lab-A" class="label" style="left: 60px; top: 186px; font-size: 64px">ある市</div>
+        <div data-hf-id="hf-ozkb" id="d-lab-B" class="label" style="left: 929px; top: 186px; font-size: 64px">別のある区</div>
+      </div>
+
+      <!-- ============ 3e ============ -->
+      <div data-hf-id="hf-0jod" id="s3e" class="scene">
+        <div data-hf-id="hf-t77k" id="e-grid" class="scene"></div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        // ---- cut boundaries (master seconds). Each cut ends inside a static hold.
+        const T = { a: 0, b: 8.0, c: 17.4, c2: 24.6, d: 33.0, e: 37.8, end: 44.4 };
+        const $ = (s) => document.querySelector(s);
+        const tl = gsap.timeline({ paused: true });
+
+        // ---------- helpers
+        function draw(el, at, dur, ease) {
+          tl.fromTo(el, { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: dur, ease: ease || "power2.inOut" }, at);
+        }
+        function boxIn(el, at, dur) {
+          tl.fromTo(el, { strokeDasharray: 1, strokeDashoffset: 1, fillOpacity: 0 }, { strokeDashoffset: 0, fillOpacity: 1, duration: dur || 0.45, ease: "power2.out" }, at);
+        }
+        function popIn(el, at, from) {
+          tl.fromTo(el, Object.assign({ opacity: 0, y: 16, scale: 0.96 }, from || {}), { opacity: 1, y: 0, scale: 1, duration: 0.38, ease: "power3.out" }, at);
+        }
+        function exitLeft(el, at) {
+          tl.to(el, { x: -140, opacity: 0, duration: 0.55, ease: "power2.in" }, at);
+        }
+
+        // ---------- split text into chars
+        function chars(el, text) {
+          el.innerHTML = "";
+          return Array.from(text).map((c) => {
+            const s = document.createElement("span");
+            s.className = "ch";
+            s.textContent = c === " " ? " " : c;
+            el.appendChild(s);
+            return s;
+          });
+        }
+
+        // initial hidden state for everything that enters later
+        const hidden = [
+          "#a-pdf", "#a-robot", "#a-beam", "#a-x", "#a-scanband",
+          "#b-scan", "#b-marquee", "#b-cap-l", "#b-table", "#b-cap-r", "#b-panel", "#b-nonum", "#b-copy", "#b-cursor",
+          "#c-spread", "#c-lab-red", "#c-lab-gray", "#c-lab-blue", "#c-arrowhead",
+          "#v-cam", "#v-lab-blue", "#v-lab-red", "#v-h0", "#v-h1", "#v-h2", "#v-h3", "#v-bluehead", "#v-redhead",
+          "#d-A", "#d-B", "#d-lab-A", "#d-lab-B", "#dA-tag-red", "#dA-tag-blue", "#dB-tag-red", "#dB-tag-blue",
+        ];
+        tl.set(hidden, { opacity: 0 }, 0);
+        tl.set(["#c-red", "#c-gray", "#c-blue", "#c-arrow", "#v-redbox", "#v-blue", "#v-red", "#dA-red", "#dA-blue", "#dB-red", "#dB-blue"], { strokeDasharray: 1, strokeDashoffset: 1, fillOpacity: 0 }, 0);
+
+        // =====================================================================
+        // 3a  これを AI に解析させ……れません
+        // =====================================================================
+        const a = T.a;
+        const l1 = chars($("#a-l1"), "AI に解析させ");
+        const dots = chars($("#a-dots"), "……");
+        const t2 = chars($("#a-t2"), "れません");
+        tl.set([...l1, ...dots, ...t2], { opacity: 0 }, 0);
+        $("#a-scanband").style.background = "linear-gradient(180deg, rgba(10,10,10,0) 0%, rgba(10,10,10,0.10) 80%, rgba(10,10,10,0.35) 100%)";
+
+        // the page is laid down
+        tl.fromTo("#a-pdf", { opacity: 0, y: -46, rotation: -2.5, scale: 1.035 }, { opacity: 1, y: 0, rotation: 0, scale: 1, duration: 0.9, ease: "power3.out" }, a + 0.45);
+        // the robot arrives and leans in to read
+        tl.fromTo("#a-robot", { opacity: 0, x: 260 }, { opacity: 1, x: 0, duration: 0.8, ease: "power3.out" }, a + 2.0);
+        tl.to("#a-robot", { x: -34, rotation: -7, transformOrigin: "50% 100%", duration: 0.55, ease: "power2.out" }, a + 2.85);
+        tl.to("#a-eyes", { x: -26, duration: 0.3, ease: "power2.out" }, a + 2.9);
+        tl.to("#a-beam", { opacity: 1, duration: 0.35, ease: "power1.out" }, a + 3.2);
+        tl.set("#a-scanband", { opacity: 1, y: -90 }, a + 3.2);
+        tl.to("#a-scanband", { y: 820, duration: 1.9, ease: "none" }, a + 3.2);
+        tl.to("#a-beam-poly", { attr: { points: "1112,330 880,560 880,930" }, duration: 1.9, ease: "none" }, a + 3.2);
+        tl.fromTo("#a-eyes", { y: -8 }, { y: 10, duration: 1.9, ease: "none" }, a + 3.2);
+        // caption types while it reads
+        tl.to(l1, { opacity: 1, duration: 0.01, stagger: 0.075 }, a + 3.3);
+        tl.to(dots, { opacity: 1, duration: 0.01, stagger: 0.4 }, a + 4.4);
+        // ...nothing. pause, then the X
+        tl.to("#a-beam", { opacity: 0, duration: 0.2 }, a + 5.1);
+        tl.to("#a-scanband", { opacity: 0, duration: 0.2 }, a + 5.1);
+        tl.fromTo("#a-x", { opacity: 0, scale: 2.3, rotation: -8, transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, rotation: 0, duration: 0.17, ease: "power4.in" }, a + 5.75);
+        tl.to(t2, { opacity: 1, duration: 0.01, stagger: 0.035 }, a + 5.92);
+        tl.fromTo("#a-t2", { y: -14 }, { y: 0, duration: 0.25, ease: "back.out(3)" }, a + 5.92);
+        tl.to("#a-shake", { keyframes: [{ x: 16 }, { x: -12 }, { x: 8 }, { x: -4 }, { x: 0 }], duration: 0.34, ease: "none" }, a + 5.92);
+        tl.to("#a-robot", { x: 4, rotation: 3, duration: 0.3, ease: "back.out(2)" }, a + 5.92);
+        tl.to("#a-eyes", { x: 0, y: 0, duration: 0.2 }, a + 5.92);
+        tl.to(["#a-eye-l", "#a-eye-r"], { attr: { height: 8, y: 183 }, duration: 0.12 }, a + 5.92);
+        // static from ~6.3 to the cut at 8.0
+
+        // =====================================================================
+        // 3b  テキストがない／あっても文字化け
+        // =====================================================================
+        const b = T.b;
+        exitLeft(["#a-pdf", "#a-robot", "#a-x"], b + 0.15);
+        tl.to("#a-text", { y: 40, opacity: 0, duration: 0.45, ease: "power2.in" }, b + 0.15);
+
+        popIn("#b-scan", b + 0.75, { y: 30 });
+        // drag across the scan -> nothing selects
+        const scanX = 80, scanY = 220;
+        tl.set("#b-cursor", { x: scanX + 70, y: scanY + 70, opacity: 0 }, b);
+        tl.to("#b-cursor", { opacity: 1, duration: 0.2 }, b + 1.3);
+        tl.set("#b-marquee", { opacity: 1, left: scanX + 86, top: scanY + 100, width: 4, height: 4 }, b + 1.6);
+        tl.to("#b-cursor", { x: scanX + 470, y: scanY + 300, duration: 1.0, ease: "power1.inOut" }, b + 1.6);
+        tl.to("#b-marquee", { width: 400, height: 232, duration: 1.0, ease: "power1.inOut" }, b + 1.6);
+        tl.to("#b-marquee", { keyframes: [{ opacity: 0.15 }, { opacity: 0.9 }, { opacity: 0.15 }, { opacity: 0 }], duration: 0.5, ease: "none" }, b + 2.75);
+        popIn("#b-cap-l", b + 3.1);
+
+        // table: drag-select the first three rows (目 + 節 + amounts)
+        popIn("#b-table", b + 3.6, { y: 30 });
+        const tk = 660 / 1431; // table image scale
+        const rows = [
+          { x0: 10, x1: 1420, y: 254 },
+          { x0: 930, x1: 1420, y: 316 },
+          { x0: 930, x1: 1420, y: 378 },
+        ];
+        const hlHost = $("#b-hls");
+        rows.forEach((r, i) => {
+          const d = document.createElement("div");
+          d.className = "hl";
+          d.id = "b-hl" + i;
+          d.style.left = r.x0 * tk + "px";
+          d.style.top = (r.y - 22) * tk + "px";
+          d.style.width = (r.x1 - r.x0) * tk + "px";
+          d.style.height = 46 * tk + "px";
+          hlHost.appendChild(d);
+          tl.fromTo(d, { opacity: 0, scaleX: 0, transformOrigin: "0% 50%" }, { opacity: 1, scaleX: 1, duration: 0.28, ease: "power1.out" }, b + 4.45 + i * 0.26);
+        });
+        tl.set("#b-cursor", { x: 700 + 6, y: 220 + 222 * tk - 4 }, b + 4.0);
+        tl.to("#b-cursor", { opacity: 1, duration: 0.2 }, b + 4.1);
+        tl.to("#b-cursor", { x: 700 + 1415 * tk, y: 220 + 400 * tk - 30, duration: 0.95, ease: "power1.inOut" }, b + 4.4);
+        tl.set("#b-copy", { left: 700 + 1415 * tk - 40, top: 220 + 400 * tk + 44 }, b);
+        popIn("#b-copy", b + 5.45, { y: 8 });
+        tl.to("#b-cursor", { opacity: 0, duration: 0.2 }, b + 5.45);
+
+        // paste: garbled text comes out
+        popIn("#b-panel", b + 5.85, { y: 20 });
+        const garbled = [
+          ["㧗㱋⚟♴⥲ົ㈝", "高齢福祉総務費"],
+          ["ሗ㓘", "報酬"],
+          ["⤥ᩱ", "給料"],
+          ["⫋ဨᡭᙜ➼", "職員手当等"],
+        ];
+        garbled.forEach((g, i) => {
+          const wrap = document.createElement("div");
+          wrap.className = "g-line";
+          wrap.id = "b-g" + i;
+          wrap.style.top = 84 + i * 118 + "px";
+          const t = document.createElement("span");
+          t.className = "g-text";
+          if (i === 2) {
+            // ⤥ + combining ᩱ: shape each separately so no single fallback font has to cover the cluster
+            Array.from(g[0]).forEach((ch) => {
+              const sp = document.createElement("span");
+              sp.style.display = "inline-block";
+              sp.textContent = ch;
+              t.appendChild(sp);
+            });
+          } else {
+            t.textContent = g[0];
+          }
+          const o = document.createElement("span");
+          o.className = "g-orig";
+          o.textContent = "← " + g[1];
+          wrap.appendChild(t);
+          wrap.appendChild(o);
+          $("#b-panel").appendChild(wrap);
+          tl.fromTo(wrap, { opacity: 0, x: -14 }, { opacity: 1, x: 0, duration: 0.26, ease: "power2.out" }, b + 6.25 + i * 0.32);
+        });
+        tl.to("#b-copy", { opacity: 0, duration: 0.25 }, b + 6.25);
+        popIn("#b-cap-r", b + 6.25);
+        popIn("#b-nonum", b + 7.75);
+        // static from ~8.15 to the cut at 9.4
+
+        // =====================================================================
+        // 3c  見開きで初めて意味を持つ
+        // =====================================================================
+        const c = T.c;
+        exitLeft(["#b-left", "#b-right"], c + 0.15);
+        const cS = 860 / 1674;
+        tl.set("#c-spread", { x: (1920 - 3076 * cS) / 2, y: 110, scale: cS }, 0);
+        tl.fromTo("#c-spread", { opacity: 0, y: 140 }, { opacity: 1, y: 110, duration: 0.8, ease: "power3.out" }, c + 0.6);
+        boxIn("#c-red", c + 2.2, 0.45);
+        popIn("#c-lab-red", c + 2.55);
+        boxIn("#c-gray", c + 3.15, 0.55);
+        popIn("#c-lab-gray", c + 3.5);
+        draw("#c-arrow", c + 4.05, 0.5, "power2.in");
+        tl.fromTo("#c-arrowhead", { opacity: 0, scale: 0.4, transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, duration: 0.14 }, c + 4.52);
+        boxIn("#c-blue", c + 4.6, 0.45);
+        popIn("#c-lab-blue", c + 5.0);
+        // static from ~5.4 to the cut at 7.2
+
+        // =====================================================================
+        // 3c-2  横に読む表に、急に縦読み
+        // =====================================================================
+        const v = T.c2;
+        tl.to("#c-spread", { x: "-=420", opacity: 0, duration: 0.6, ease: "power2.in" }, v + 0.15);
+        const ov = 1760 / 3525;
+        const zs = 0.8;
+        const zx = 282 - 1830 * zs;
+        tl.set("#v-cam", { x: 80 + 260, y: (1080 - 1139 * ov) / 2, scale: ov }, 0);
+        tl.to("#v-cam", { opacity: 1, x: 80, duration: 0.8, ease: "power3.out" }, v + 0.7);
+        tl.to("#v-cam", { x: zx, y: 22, scale: zs, duration: 1.25, ease: "power2.inOut" }, v + 1.65);
+        popIn("#v-lab-blue", v + 2.95);
+        // blue: trace the row, pausing on each figure
+        const bl = $("#v-blue");
+        tl.fromTo(bl, { strokeDashoffset: 1 }, { strokeDashoffset: 0.6, duration: 0.6, ease: "power1.inOut" }, v + 3.05);
+        tl.to("#v-h0", { opacity: 1, duration: 0.15 }, v + 3.05);
+        tl.to("#v-h1", { opacity: 1, duration: 0.15 }, v + 3.5);
+        tl.to(bl, { strokeDashoffset: 0.4, duration: 0.45, ease: "power1.inOut" }, v + 3.85);
+        tl.to("#v-h2", { opacity: 1, duration: 0.15 }, v + 4.2);
+        tl.to(bl, { strokeDashoffset: 0.0, duration: 0.6, ease: "power2.in" }, v + 4.5);
+        tl.to("#v-h3", { opacity: 1, duration: 0.15 }, v + 4.85);
+        tl.to("#v-bluehead", { opacity: 1, duration: 0.05 }, v + 5.08);
+        // ...enters 備考 and stops dead
+        tl.fromTo("#v-bluehead", { x: 0 }, { keyframes: [{ x: -10 }, { x: 0 }], duration: 0.25, ease: "power1.out" }, v + 5.1);
+        // red: the same row's right edge is another business, read top to bottom
+        boxIn("#v-redbox", v + 5.55, 0.4);
+        draw("#v-red", v + 5.75, 0.7, "power2.in");
+        tl.to("#v-redhead", { opacity: 1, duration: 0.06 }, v + 6.43);
+        popIn("#v-lab-red", v + 6.5);
+        // static from ~6.9 to the cut at 8.4
+
+        // =====================================================================
+        // 3d  自治体ごとに形式が違う（同じ縮尺）
+        // =====================================================================
+        const d = T.d;
+        tl.to(["#v-cam", "#v-lab-blue", "#v-lab-red"], { opacity: 0, y: "+=30", duration: 0.5, ease: "power2.in" }, d + 0.15);
+        const ds = 0.7986 / 3; // same px-per-pt for both documents
+        const ax = 60, bx = 60 + 3076 * ds + 50, dy = 286;
+        $("#d-lab-B").style.left = bx + "px";
+        tl.set("#d-A", { x: ax, y: dy, scale: ds }, 0);
+        tl.set("#d-B", { x: bx, y: dy, scale: ds }, 0);
+        tl.fromTo("#d-A", { opacity: 0, y: dy + 60 }, { opacity: 1, y: dy, duration: 0.7, ease: "power3.out" }, d + 0.5);
+        tl.fromTo("#d-B", { opacity: 0, y: dy + 60 }, { opacity: 1, y: dy, duration: 0.7, ease: "power3.out" }, d + 0.6);
+        popIn("#d-lab-A", d + 0.75);
+        popIn("#d-lab-B", d + 0.85);
+        boxIn(["#dA-red", "#dB-red"], d + 1.5, 0.4);
+        popIn(["#dA-tag-red", "#dB-tag-red"], d + 1.75);
+        boxIn(["#dA-blue", "#dB-blue"], d + 2.25, 0.45);
+        popIn(["#dA-tag-blue", "#dB-tag-blue"], d + 2.5);
+        // static from ~2.9 to the cut at 4.8
+
+        // =====================================================================
+        // 3e  これが全自治体分ある
+        // =====================================================================
+        const e = T.e;
+        const grid = $("#e-grid");
+        const COLS = 15, ROWS = 6, CW = 128, CH = 180;
+        const files = [];
+        for (let i = 0; i < 88; i++) files.push("t" + String(i).padStart(2, "0") + ".png");
+        // seeded shuffle (mulberry32)
+        let seed = 20251017;
+        const rnd = () => {
+          seed |= 0; seed = (seed + 0x6d2b79f5) | 0;
+          let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+        const cellA = 2 * COLS + 3, cellB = 2 * COLS + 10; // where the two spreads land
+        const cells = [];
+        for (let i = 0; i < COLS * ROWS; i++) if (i !== cellA && i !== cellB) cells.push(i);
+        for (let i = cells.length - 1; i > 0; i--) {
+          const j = Math.floor(rnd() * (i + 1));
+          [cells[i], cells[j]] = [cells[j], cells[i]];
+        }
+        function tile(idx, src, id) {
+          const el = document.createElement("div");
+          el.className = "tile";
+          el.id = id;
+          el.style.left = (idx % COLS) * CW + "px";
+          el.style.top = Math.floor(idx / COLS) * CH + "px";
+          const im = document.createElement("img");
+          im.src = "assets/img/thumbs/" + src;
+          im.alt = "";
+          el.appendChild(im);
+          grid.appendChild(el);
+          tl.set(el, { opacity: 0 }, 0);
+          return el;
+        }
+        const tA = tile(cellA, "tA.png", "e-tA");
+        const tB = tile(cellB, "tB.png", "e-tB");
+        // the two spreads shrink into their tiles
+        tl.to(["#d-lab-A", "#d-lab-B", "#dA-tag-red", "#dA-tag-blue", "#dB-tag-red", "#dB-tag-blue"], { opacity: 0, duration: 0.3 }, e + 0.15);
+        const cx = (i) => (i % COLS) * CW, cy = (i) => Math.floor(i / COLS) * CH;
+        tl.to("#d-A", { x: cx(cellA), y: cy(cellA), scale: 128 / 1515, duration: 0.85, ease: "power3.inOut" }, e + 0.25);
+        tl.to("#d-B", { x: cx(cellB) - 64, y: cy(cellB) + 6, scale: 256 / 3471, duration: 0.85, ease: "power3.inOut" }, e + 0.25);
+        tl.to([tA, tB], { opacity: 1, duration: 0.25 }, e + 0.92);
+        tl.to(["#d-A", "#d-B"], { opacity: 0, duration: 0.25 }, e + 0.92);
+        // then the rest, one by one, accelerating
+        let at = e + 1.25, step = 0.3;
+        cells.forEach((ci, k) => {
+          const el = tile(ci, files[k], "e-t" + k);
+          tl.fromTo(el, { opacity: 0, scale: 0.86 }, { opacity: 1, scale: 1, duration: 0.22, ease: "power2.out" }, at);
+          at += step;
+          step = Math.max(0.016, step * 0.86);
+        });
+        // finally cover the two (sparse) spreads with dense pages, so no blank cell remains
+        [[cellA, "t88.png"], [cellB, "t89.png"]].forEach(([ci, f], k) => {
+          const el = tile(ci, f, "e-tc" + k);
+          tl.fromTo(el, { opacity: 0, scale: 0.86 }, { opacity: 1, scale: 1, duration: 0.22, ease: "power2.out" }, at);
+          at += step;
+        });
+        // last tile lands ~4.9s into the cut; static to the end
+
+        tl.set({}, {}, T.end);
+        window.__hfCuts = T;
+        window.__timelines["fudoki-odh-v1"] = tl;
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "fudoki-odh-final-motion",
+  "private": true,
+  "scripts": {
+    "check": "node ../../../packages/cli/bin/hyperframes.mjs check",
+    "render": "node ../../../packages/cli/bin/hyperframes.mjs render --fps 30 --output ../work/master.mp4"
+  }
+}
