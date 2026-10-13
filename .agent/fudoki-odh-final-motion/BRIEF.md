@@ -1,9 +1,9 @@
 # 風土記 ODH Final 動画① 「読めない」 制作 brief
 
-作業ディレクトリ: /Users/yuito_watanabe/src/github.com/wwwyo/hyperframes
-このディレクトリの中だけで作業する。制作物はすべて `/Users/yuito_watanabe/src/github.com/wwwyo/hyperframes/.agent/fudoki-odh-final-motion/` に置く（gitignore 対象）。
+作業ディレクトリ: hyperframes repo のルート
+このディレクトリの中だけで作業する。制作物はすべて `.agent/fudoki-odh-final-motion/` に置く（gitignore 対象）。
 hyperframes の tracked ファイル（packages/・skills/・AGENTS.md など）は変更しない。commit / push / PR はしない。
-fudoki の worktree（/Users/yuito_watanabe/orca/workspaces/fudoki/\*）とその中の PDF・parquet は**読むだけ**。
+fudoki の worktree（~/orca/workspaces/fudoki/\*）とその中の PDF・parquet は**読むだけ**。
 入口は `/hyperframes` skill（この repo の project-local skill。AGENTS.md の規則に従い、`hyperframes skills` は実行しない）。
 **今回作るのは動画①（3a〜3e）だけ。** 動画②（3f〜3i）は作らない。
 
@@ -15,7 +15,7 @@ fudoki の worktree（/Users/yuito_watanabe/orca/workspaces/fudoki/\*）とそ�
 - **語り1文＝1カット**で書き出す。各カットは動き終えたら最後のフレームで静止（最後の1秒以上は動かさない）。本人が手で次のカットへ送る。各カットの最初のフレームは前のカットの最後のフレームと同じにする（継ぎ目で絵が飛ばない）。
 - 1920x1080、30fps。オンライン配信で縮小されるので文字は大きく少なく。
 - **画面に個別の自治体名・地名を一切出さない**（批判に見えるのを避ける）。素材画像も自治体名・地名が映らないように切ってある。新たに描画する場合も同じ。
-- 見た目: 落ち着いた紙と墨のトーン。色は意味のあるところだけ。ブランド色は青丹 `#2f5d43`、強調はオレンジ `#c1553a`、紙 `#f4f1e6`、墨 `oklch(0.145 0 0)` 相当。詳しくは `/Users/yuito_watanabe/orca/workspaces/fudoki/rainbowfish/DESIGN.md`。前回の風土記の動画 `/Users/yuito_watanabe/src/github.com/wwwyo/hyperframes/.agent/todokeru-creative-v2/` もトーンの参考に読んでよい（変更しない）。
+- 見た目: 落ち着いた紙と墨のトーン。色は意味のあるところだけ。ブランド色は青丹 `#2f5d43`、強調はオレンジ `#c1553a`、紙 `#f4f1e6`、墨 `oklch(0.145 0 0)` 相当。詳しくは `~/orca/workspaces/fudoki/rainbowfish/DESIGN.md`。前回の風土記の動画 `.agent/todokeru-creative-v2/` もトーンの参考に読んでよい（変更しない）。
 
 ## 正本のストーリーボード
 
@@ -45,13 +45,13 @@ fudoki の worktree（/Users/yuito_watanabe/orca/workspaces/fudoki/\*）とそ�
 
 - 語り: 極めつけは、人間でも読みにくい様式です。見開きで初めて意味を持ったり、
 - 画: 見開き（`3c-spread-annotated.png` は注釈済みの参考。注釈は動きで付け直してよい。注釈なしの素材が欲しければ下の原典から描画）→ 左頁「4 高齢福祉費」の行に赤枠「目の名前だけ」→ その下が空白なのを灰枠 → 赤い矢印が右頁へ飛び、説明欄の事業（高齢者補聴器購入費補助事業費、介護事業所支援事業費）を青枠「中身の事業はここにだけ」。
-- 原典（注釈なしで描画したい場合）: `/Users/yuito_watanabe/orca/workspaces/fudoki/fiscal-generic-trial/pipeline/.cache/objects/fiscal/source-selection/132071/2025/initial-5.pdf` 物理 p.220（左）・p.221（右）。**右頁の下の方に地名入りの施設名があるので、下は切る**（`3c-spread-annotated.png` の範囲まで）。
+- 原典（注釈なしで描画したい場合）: `~/orca/workspaces/fudoki/fiscal-generic-trial/pipeline/.cache/objects/fiscal/source-selection/132071/2025/initial-5.pdf` 物理 p.220（左）・p.221（右）。**右頁の下の方に地名入りの施設名があるので、下は切る**（`3c-spread-annotated.png` の範囲まで）。
 
 ### 3c-2 — 人間でも読みにくい様式② 横に読む表に、急に縦読み（小ボケ）
 
 - 語り: 一見ふつうの表で横に読んでいくと、急に縦読みのデータが出てくる。……読めない、というより、AI には絶対に読ませないという意思すら感じます。
 - 画: `3c2-vertical-read.png`（表の見出し＋行）。青い矢印で「7 報償費 1,375,000 → 支出済額 841,000 → 不用額 534,000」と行を横になぞる → 右端の備考欄に入った瞬間に止まり、赤い矢印で縦に落ちる（同じ行の右端は別の事業「〇消費者センター運営・維持管理【区・管理課】」の一覧が行をまたいで縦に流れている）。最後の一文は間を取るので、画面は静かに静止。
-- 原典（高解像度が要れば）: `/Users/yuito_watanabe/orca/workspaces/fudoki/fiscal-generic-trial/pipeline/.cache/objects/fiscal/source-selection/131156/2025/settlement-1.pdf` 物理 p.31 の下半分（「5消費生活費」の行から）＋見出し。**同じ頁の上部に地名入りの施設名があるので、上部の本文は使わない**（見出しの帯と下半分だけ）。
+- 原典（高解像度が要れば）: `~/orca/workspaces/fudoki/fiscal-generic-trial/pipeline/.cache/objects/fiscal/source-selection/131156/2025/settlement-1.pdf` 物理 p.31 の下半分（「5消費生活費」の行から）＋見出し。**同じ頁の上部に地名入りの施設名があるので、上部の本文は使わない**（見出しの帯と下半分だけ）。
 
 ### 3d — 自治体ごとに形式が違う（同じ粒度で比較）
 
@@ -63,7 +63,7 @@ fudoki の worktree（/Users/yuito_watanabe/orca/workspaces/fudoki/\*）とそ�
 
 - 語り: これが全自治体分あることが、かなり大変でした。
 - 画: 実物の PDF の頁サムネが1枚ずつ増え、加速して画面を埋める。最後は埋まった状態で静止（ここで動画①が終わり、本人が間を取る）。
-- サムネの素材: `/Users/yuito_watanabe/orca/workspaces/fudoki/*/pipeline/.cache/objects/fiscal/source-selection/<団体コード>/2025/*.pdf` の表のある頁を描画（15団体ほどある）。**サムネでも自治体名・地名が読めない解像度・範囲にする**（表紙・タイトル頁は使わない）。
+- サムネの素材: `~/orca/workspaces/fudoki/*/pipeline/.cache/objects/fiscal/source-selection/<団体コード>/2025/*.pdf` の表のある頁を描画（15団体ほどある）。**サムネでも自治体名・地名が読めない解像度・範囲にする**（表紙・タイトル頁は使わない）。
 
 ## 描画のコツ（確認済み）
 

@@ -1,12 +1,12 @@
 # 風土記 ODH Final 動画② 「座標から木へ」 制作 brief
 
-作業ディレクトリ: /Users/yuito_watanabe/src/github.com/wwwyo/hyperframes
-このディレクトリの中だけで作業する。制作物は `/Users/yuito_watanabe/src/github.com/wwwyo/hyperframes/.agent/fudoki-odh-final-motion/` の下に置く。
+作業ディレクトリ: hyperframes repo のルート
+このディレクトリの中だけで作業する。制作物は `.agent/fudoki-odh-final-motion/` の下に置く。
 
 - 動画②の project は **`project2/`**（新規）に作る。動画①の `project/` と `out/3*.mp4` は変更しない（親が別途修正中）。フォント・gsap・`pdf-3a.png` など使い回す素材は `project/assets/` から `project2/assets/` へコピーする。
 - 書き出し先は `out/3f.mp4` `out/3g.mp4` `out/3h.mp4` `out/3i.mp4`、代表フレームは `out/frames/3f-start.png` など、中間物は `work2/`。
 - hyperframes の tracked ファイル（packages/・skills/・AGENTS.md など）は変更しない。**commit / push / PR はしない**（親がやる）。
-- fudoki の worktree（/Users/yuito_watanabe/orca/workspaces/fudoki/\*）とその中の PDF・parquet は**読むだけ**。
+- fudoki の worktree（~/orca/workspaces/fudoki/\*）とその中の PDF・parquet は**読むだけ**。
 - 入口は `/hyperframes` skill（この repo の project-local skill）。
 
 ## 背景
@@ -27,7 +27,7 @@ https://claude.ai/artifact/75s1t6pLNEoQhzS9Q6VQHL の 3f〜3i。中身を以下�
 - 語り: 風土記では、まずそれぞれの情報を、OCR やテキストの読み出しで、テキストと座標に変換しました。
 - 画: 3a と同じ決算書の頁が1枚、真ん中に置かれた状態から入る（3e の最後の画とはつなげなくてよい）→ 頁の上の文字・金額に座標の枠が順に付く → 枠から「テキスト＋座標」のラベルが横に引き出される。対象:
   - 議員報酬及び期末手当等 / 499,424,236 / （1）報酬 286,477,996 / （2）期末手当 138,121,200 / （3）共済費 74,825,040
-- 座標は**実際の値**を使う（`[x0, y0, x1, y1]` のプレースホルダではなく）。原典: `/Users/yuito_watanabe/orca/workspaces/fudoki/fiscal-jev-coverage-2/pipeline/.cache/objects/fiscal/source-selection/132012/2025/settlement-1.pdf` 物理 p.148。`pdftotext -f 148 -l 148 -bbox <pdf> -` で語ごとの枠（pt）が取れる。表示は小数1桁か整数で短く。枠の位置は `pdf-3a.png` の切り抜き範囲に合わせて換算して頁の上に重ねる（切り抜きの原点は `pdf-3a.png` と原典を描画して突き合わせて求める）。
+- 座標は**実際の値**を使う（`[x0, y0, x1, y1]` のプレースホルダではなく）。原典: `~/orca/workspaces/fudoki/fiscal-jev-coverage-2/pipeline/.cache/objects/fiscal/source-selection/132012/2025/settlement-1.pdf` 物理 p.148。`pdftotext -f 148 -l 148 -bbox <pdf> -` で語ごとの枠（pt）が取れる。表示は小数1桁か整数で短く。枠の位置は `pdf-3a.png` の切り抜き範囲に合わせて換算して頁の上に重ねる（切り抜きの原点は `pdf-3a.png` と原典を描画して突き合わせて求める）。
 
 ### 3g — 座標から木構造へ
 
