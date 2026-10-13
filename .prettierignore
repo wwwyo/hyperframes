@@ -49,3 +49,7 @@ skills/talking-head-recut/references/frames/polaroid.html
 # explicitly (not registry/examples/**/*.html) so hand-authored example HTML still
 # gets formatted.
 registry/examples/warm-grain/compositions/captions.html
+
+# Force-added video deliverables (rendered compositions). Reformatting can shift
+# inline whitespace and change the rendered frames, so leave them as authored.
+.agent/

@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>風土記 ODH 動画② 座標から木へ</title>
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Noto Sans JP";
+        src: url("assets/fonts/NotoSansJP.ttf") format("truetype");
+        font-weight: 100 900;
+        font-style: normal;
+      }
+      :root {
+        /* background: the slide white; change this one value to retint */
+        --paper: #ffffff;
+        --sheet: #fffdf8;
+        --ink: #0a0a0a;
+        --muted: #6b6b6b;
+        --rule: #d8d2c2;
+        --red: #c1553a;
+        --blue: #2c5a85;
+        --gray: #7d7d7d;
+        --yellow: #b8901c;
+        --green: #2f5d43;
+        --purple: #74559e;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        background: var(--paper);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--paper);
+        font-family: "Noto Sans JP", sans-serif;
+        color: var(--ink);
+        font-variant-numeric: tabular-nums;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+      }
+      .abs {
+        position: absolute;
+        display: block;
+      }
+      svg {
+        overflow: visible;
+      }
+      .sheet {
+        position: absolute;
+        background: var(--sheet);
+        box-shadow:
+          0 1px 0 rgba(10, 10, 10, 0.06),
+          0 14px 34px rgba(60, 50, 30, 0.14);
+      }
+      .sheet img {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      /* 3f: text + bbox labels */
+      .card {
+        position: absolute;
+        width: 380px;
+        padding: 12px 18px 12px;
+        background: var(--sheet);
+        border: 3px solid var(--ink);
+        border-radius: 10px;
+        white-space: nowrap;
+      }
+      .card .t {
+        display: block;
+        font-size: 30px;
+        line-height: 36px;
+        font-weight: 800;
+        color: var(--ink);
+      }
+      .card .xy {
+        display: block;
+        margin-top: 4px;
+        font-size: 22px;
+        line-height: 28px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .peel {
+        position: absolute;
+        white-space: nowrap;
+        font-weight: 800;
+        color: var(--ink);
+        transform-origin: 0 0;
+      }
+
+      /* tree nodes */
+      .node {
+        position: absolute;
+        background: var(--sheet);
+        border: 4px solid var(--ink);
+        border-radius: 12px;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      .node .tag {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--ink);
+        color: var(--sheet);
+        font-size: 26px;
+        font-weight: 800;
+        line-height: 1.1;
+        text-align: center;
+      }
+      .node .nm {
+        position: absolute;
+        left: 92px;
+        font-size: 34px;
+        line-height: 40px;
+        font-weight: 800;
+      }
+      .node .am {
+        position: absolute;
+        left: 92px;
+        font-size: 30px;
+        line-height: 36px;
+        font-weight: 600;
+      }
+      /* same meaning as video ① 3d: 目 = red, 事業 = blue */
+      .node.k-moku {
+        border-color: var(--red);
+      }
+      .node.k-moku .tag {
+        background: var(--red);
+      }
+      .node.k-jigyo {
+        border-color: var(--blue);
+      }
+      .node.k-jigyo .tag {
+        background: var(--blue);
+      }
+      .node.k-uchi {
+        border-color: var(--gray);
+      }
+      .node.k-uchi .tag {
+        background: var(--gray);
+      }
+
+      /* 3h: type-only nodes */
+      .tnode {
+        position: absolute;
+        height: 80px;
+        border: 4px solid;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        font-weight: 800;
+        white-space: nowrap;
+        background: var(--sheet);
+      }
+      .tn-setsu {
+        border-color: var(--green);
+        background: #dde8e1;
+        color: var(--green);
+      }
+      .tn-jigyo {
+        border-color: var(--blue);
+        color: var(--blue);
+      }
+      .tn-setsumei {
+        border-color: var(--yellow);
+        background: #f3e9c6;
+        color: #7d5f0a;
+      }
+      .tn-zaigen {
+        border-color: var(--purple);
+        background: #e6def0;
+        color: var(--purple);
+      }
+      .tn-gray {
+        border-color: var(--gray);
+        color: #4d4d4d;
+      }
+      .ann {
+        position: absolute;
+        width: 460px;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .ann .who {
+        display: block;
+        font-size: 40px;
+        line-height: 1.2;
+        font-weight: 800;
+      }
+      .ann .path {
+        display: block;
+        margin-top: 8px;
+        font-size: 30px;
+        line-height: 1.2;
+        font-weight: 600;
+        color: var(--muted);
+      }
+
+      /* 3i */
+      .badge {
+        position: absolute;
+        width: 46px;
+        height: 46px;
+      }
+      #i-formula {
+        position: absolute;
+        left: 0;
+        top: 846px;
+        width: 1920px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 18px;
+        font-size: 46px;
+        line-height: 1.2;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+      #i-formula .op {
+        color: var(--muted);
+        font-weight: 600;
+      }
+      #i-formula .sum {
+        color: var(--green);
+      }
+      .tok {
+        position: absolute;
+        font-size: 30px;
+        line-height: 36px;
+        font-weight: 800;
+        color: var(--green);
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-r2ot" id="root" data-composition-id="fudoki-odh-v2" data-start="0" data-width="1920" data-height="1080" data-duration="27.6" data-fps="30">
+      <!-- page (3f/3g): native 1240x1755 = p.148 at 150dpi; overlay in image px -->
+      <div data-hf-id="hf-p2pg" id="f-page" class="sheet" style="left: 0; top: 0; width: 1240px; height: 1755px; transform-origin: 0 0">
+        <img data-hf-id="hf-p2im" src="assets/img/pdf-3a.png" alt="">
+        <svg data-hf-id="hf-p2bx" id="f-boxes" class="abs" style="left: 0; top: 0" width="1240" height="1755" viewBox="0 0 1240 1755"></svg>
+      </div>
+      <svg data-hf-id="hf-p2ld" id="f-leaders" class="abs" style="left: 0; top: 0" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+      <div data-hf-id="hf-p2cd" id="f-cards" class="scene"></div>
+
+      <!-- tree (3g/3h/3i) -->
+      <svg data-hf-id="hf-p2ed" id="g-edges" class="abs" style="left: 0; top: 0" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+      <svg data-hf-id="hf-p2he" id="h-edges" class="abs" style="left: 0; top: 0" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+      <svg data-hf-id="hf-p2ie" id="i-edges" class="abs" style="left: 0; top: 0" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+      <div data-hf-id="hf-p2hn" id="h-nodes" class="scene"></div>
+      <div data-hf-id="hf-p2gn" id="g-nodes" class="scene"></div>
+      <div data-hf-id="hf-p2pl" id="f-peels" class="scene"></div>
+      <div data-hf-id="hf-p2tk" id="i-toks" class="scene"></div>
+      <div data-hf-id="hf-p2fm" id="i-formula"></div>
+      <div data-hf-id="hf-p2bg" id="i-badges" class="scene"></div>
+    </div>
+
+    <script>
+      (function () {
+        // ---- cut boundaries (master seconds). Each cut ends inside a static hold.
+        const T = { f: 0, g: 7.6, h: 12.4, i: 20.4, end: 27.6 };
+        const $ = (s) => document.querySelector(s);
+        const SVGNS = "http://www.w3.org/2000/svg";
+        const tl = gsap.timeline({ paused: true });
+
+        function el(tag, cls, parent, text) {
+          const e = document.createElement(tag);
+          if (cls) e.className = cls;
+          if (text != null) e.textContent = text;
+          if (parent) parent.appendChild(e);
+          return e;
+        }
+        function sv(tag, attrs, parent) {
+          const e = document.createElementNS(SVGNS, tag);
+          for (const k in attrs) e.setAttribute(k, attrs[k]);
+          parent.appendChild(e);
+          return e;
+        }
+        function draw(target, at, dur, ease) {
+          tl.fromTo(target, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: dur, ease: ease || "power2.inOut" }, at);
+        }
+        function popIn(target, at, from) {
+          tl.fromTo(target, Object.assign({ opacity: 0, y: 14, scale: 0.96 }, from || {}), { opacity: 1, y: 0, scale: 1, duration: 0.38, ease: "power3.out" }, at);
+        }
+        const r1 = (v) => v.toFixed(1);
+
+        // =====================================================================
+        // page geometry
+        // =====================================================================
+        const PX = 150 / 72; // image px per pt (pdf-3a.png = whole p.148 at 150dpi, origin 0,0)
+        const P0 = { x: 670, y: 128, s: 580 / 1240 }; // as in 3a, centred
+        const PZ = { x: 450, y: 74, s: 0.8228 }; // zoomed: 1.714 screen px per pt
+        const scr = (pt) => ({ x: PZ.x + pt[0] * PX * PZ.s, y: PZ.y + pt[1] * PX * PZ.s, x1: PZ.x + pt[2] * PX * PZ.s, y1: PZ.y + pt[3] * PX * PZ.s });
+
+        // words on p.148 — pdftotext -f 148 -l 148 -bbox (pt, origin top-left)
+        const W = [
+          { id: "w1", t: "議員報酬及び期末手当等", bb: [57.479246, 209.285413, 167.033163, 219.195609], side: "L", row: 0 },
+          { id: "w2", t: "499,424,236", bb: [507.841561, 209.285413, 562.587904, 219.195609], side: "R", row: 0 },
+          { id: "w3", t: "（1）報酬", bb: [57.478815, 263.645391, 102.352708, 273.555587], side: "L", row: 1 },
+          { id: "w4", t: "286,477,996", bb: [342.838463, 263.645391, 397.584806, 273.555587], side: "R", row: 1 },
+          { id: "w5", t: "（2）期末手当", bb: [57.478815, 281.765384, 122.272715, 291.67558], side: "L", row: 2 },
+          { id: "w6", t: "138,121,200", bb: [342.838764, 281.765384, 397.585107, 291.67558], side: "R", row: 2 },
+          { id: "w7", t: "（3）共済費", bb: [57.478815, 299.885377, 112.312711, 309.795573], side: "L", row: 3 },
+          { id: "w8", t: "74,825,040", bb: [347.879258, 299.885377, 397.648661, 309.795573], side: "R", row: 3 },
+        ];
+        // words that only join in 3g (款・項・目, the second business)
+        const X = [
+          { id: "x-kan", bb: [51.600019, 87.236864, 81.639915, 97.292629] }, // 1 議会費 (header)
+          { id: "x-kanam", bb: [59.279953, 131.156847, 114.559945, 141.212611] }, // 754,711,008
+          { id: "x-kou", bb: [51.719756, 173.045428, 81.593643, 182.955624] }, // 1 議会費
+          { id: "x-moku", bb: [101.759774, 173.045428, 131.633662, 182.955624] }, // 1 議会費
+          { id: "x-j2", bb: [57.478847, 354.245355, 107.272742, 364.155551] }, // 議会の運営
+          { id: "x-j2am", bb: [512.880864, 354.245355, 562.650267, 364.155551] }, // 38,381,754
+        ];
+
+        // boxes on the page (image px)
+        const boxes = $("#f-boxes");
+        function pageBox(id, bb) {
+          const pad = 4;
+          return sv("rect", { id: id, x: bb[0] * PX - pad, y: bb[1] * PX - pad, width: (bb[2] - bb[0]) * PX + pad * 2, height: (bb[3] - bb[1]) * PX + pad * 2, rx: 3, fill: "rgba(10,10,10,0.08)", stroke: "#0a0a0a", "stroke-width": 5, pathLength: 1, "stroke-dasharray": 1, "stroke-dashoffset": 1, "fill-opacity": 0 }, boxes);
+        }
+        W.forEach((w) => (w.box = pageBox("b-" + w.id, w.bb)));
+        X.forEach((x) => (x.box = pageBox("b-" + x.id, x.bb)));
+
+        // cards (text + bbox), pulled out to the sides
+        const CARD_W = 380, CARD_H = 92;
+        const cardCY = [332, 444, 556, 668];
+        const cards = $("#f-cards"), leaders = $("#f-leaders");
+        W.forEach((w) => {
+          const c = el("div", "card", cards);
+          c.id = "c-" + w.id;
+          const left = w.side === "L" ? 40 : 1500;
+          const top = cardCY[w.row] - CARD_H / 2;
+          c.style.left = left + "px";
+          c.style.top = top + "px";
+          w.cardL = left;
+          w.cardT = top;
+          w.cardT_el = el("span", "t", c, w.t);
+          w.xyEl = el("span", "xy", c, "[" + w.bb.map(r1).join(", ") + "]");
+          const b = scr(w.bb);
+          const by = (b.y + b.y1) / 2;
+          const p = w.side === "L"
+            ? { x0: b.x - 6, x1: left + CARD_W }
+            : { x0: b.x1 + 6, x1: left };
+          const d = "M" + p.x0 + " " + by + " C " + (p.x0 + (p.x1 - p.x0) * 0.5) + " " + by + ", " + (p.x0 + (p.x1 - p.x0) * 0.5) + " " + cardCY[w.row] + ", " + p.x1 + " " + cardCY[w.row];
+          w.lead = sv("path", { d: d, fill: "none", stroke: "#0a0a0a", "stroke-width": 3, pathLength: 1, "stroke-dasharray": 1, "stroke-dashoffset": 1 }, leaders);
+          w.dot = sv("circle", { cx: p.x0, cy: by, r: 6, fill: "#0a0a0a", opacity: 0 }, leaders);
+          w.card = c;
+        });
+
+        // =====================================================================
+        // tree (3g)
+        // =====================================================================
+        const G = {
+          kan: { kind: "", tag: "款", nm: "議会費", am: "754,711,008", l: 795, t: 40, w: 330, h: 104 },
+          kou: { kind: "", tag: "項", nm: "議会費", l: 840, t: 200, w: 240, h: 72 },
+          moku: { kind: "k-moku", tag: "目", nm: "議会費", l: 840, t: 328, w: 240, h: 72 },
+          j1: { kind: "k-jigyo", tag: "事業", nm: "議員報酬及び期末手当等", am: "499,424,236", l: 350, t: 470, w: 540, h: 104 },
+          j2: { kind: "k-jigyo", tag: "事業", nm: "議会の運営", am: "38,381,754", l: 1175, t: 470, w: 330, h: 104 },
+          u1: { kind: "k-uchi", tag: "内訳", nm: "報酬", am: "286,477,996", l: 135, t: 650, w: 310, h: 104 },
+          u2: { kind: "k-uchi", tag: "内訳", nm: "期末手当", am: "138,121,200", l: 465, t: 650, w: 310, h: 104 },
+          u3: { kind: "k-uchi", tag: "内訳", nm: "共済費", am: "74,825,040", l: 795, t: 650, w: 310, h: 104 },
+        };
+        const gHost = $("#g-nodes");
+        const TREE_DX = 140; // centre the tree's footprint
+        Object.keys(G).forEach((k) => {
+          const n = G[k];
+          n.l += TREE_DX;
+          const e = el("div", "node " + n.kind, gHost);
+          e.id = "n-" + k;
+          Object.assign(e.style, { left: n.l + "px", top: n.t + "px", width: n.w + "px", height: n.h + "px" });
+          el("div", "tag", e, n.tag);
+          const nm = el("span", "nm", e, n.nm);
+          n.nmTop = n.am ? 14 : (n.h - 8 - 40) / 2;
+          nm.style.top = n.nmTop + "px";
+          if (n.am) {
+            const am = el("span", "am", e, n.am);
+            n.amTop = 58;
+            am.style.top = n.amTop + "px";
+            n.amEl = am;
+          }
+          n.el = e;
+          n.cx = n.l + n.w / 2;
+          n.cy = n.t + n.h / 2;
+          // text origin on screen (border 4px)
+          n.tx = n.l + 4 + 92;
+          n.nmY = n.t + 4 + n.nmTop;
+          n.amY = n.t + 4 + (n.amTop || 0);
+        });
+        const gEdges = $("#g-edges");
+        function elbow(a, b, mid) {
+          const x0 = a.cx, y0 = a.t + a.h, x1 = b.cx, y1 = b.t;
+          return x0 === x1 ? "M" + x0 + " " + y0 + " V" + y1 : "M" + x0 + " " + y0 + " V" + mid + " H" + x1 + " V" + y1;
+        }
+        const GE = [
+          ["kan", "kou", 0], ["kou", "moku", 0], ["moku", "j1", 435], ["moku", "j2", 435],
+          ["j1", "u1", 612], ["j1", "u2", 612], ["j1", "u3", 612],
+        ].map(([a, b, m]) => sv("path", { id: "e-" + b, d: elbow(G[a], G[b], m), fill: "none", stroke: "#0a0a0a", "stroke-width": 4, pathLength: 1, "stroke-dasharray": 1, "stroke-dashoffset": 1 }, gEdges));
+        const edgeOf = (k) => GE.find((p) => p.id === "e-" + k);
+
+        // peel elements for words that only join in 3g
+        const peelHost = $("#f-peels");
+        const peelSpec = [
+          { x: "x-kan", node: "kan", f: "nm" }, { x: "x-kanam", node: "kan", f: "am" },
+          { x: "x-kou", node: "kou", f: "nm" }, { x: "x-moku", node: "moku", f: "nm" },
+          { x: "x-j2", node: "j2", f: "nm" }, { x: "x-j2am", node: "j2", f: "am" },
+        ];
+        peelSpec.forEach((p) => {
+          const n = G[p.node];
+          const fs = p.f === "nm" ? 34 : 30;
+          const e = el("span", "peel", peelHost, n[p.f]);
+          Object.assign(e.style, { left: n.tx + "px", top: (p.f === "nm" ? n.nmY : n.amY) + "px", fontSize: fs + "px", lineHeight: fs * 1.2 + "px", fontWeight: p.f === "nm" ? 800 : 600 });
+          const bb = X.find((x) => x.id === p.x).bb;
+          const b = scr(bb);
+          const s = (b.y1 - b.y) / fs; // pdf bbox height ~ 1em
+          p.el = e;
+          p.from = { x: b.x - n.tx, y: b.y - fs * 0.1 * s - (p.f === "nm" ? n.nmY : n.amY), scale: s };
+        });
+
+        // =====================================================================
+        // 3h: one 目, four ways to branch
+        // =====================================================================
+        const hHost = $("#h-nodes"), hEdgesEl = $("#h-edges");
+        const MOKU_UP = 110; // 目 top in 3h
+        const mk = { cx: 960, bottom: MOKU_UP + 72 };
+        const LV = [320, 460, 600];
+        const TW = { 1: 120, 2: 150 };
+        const H = [
+          { who: "自治体A", path: "目 → 節", cx: 250, chain: [["節", "tn-setsu"]] },
+          { who: "自治体B", path: "目 → 事業 → 節", cx: 690, chain: [["事業", "tn-jigyo"], ["節", "tn-setsu"]] },
+          { who: "自治体C", path: "目 → 節・説明・財源", cx: 1170, fan: [["節", "tn-setsu", 1020], ["説明", "tn-setsumei", 1170], ["財源", "tn-zaigen", 1320]] },
+          { who: "自治体D", path: "目 → 事業 → 内訳 → 細目", cx: 1640, chain: [["事業", "tn-jigyo"], ["内訳", "tn-gray"], ["細目", "tn-gray"]] },
+        ];
+        function tnode(label, cls, cx, top) {
+          const w = label.length === 1 ? TW[1] : (cls === "tn-setsu" || cls === "tn-setsumei" || cls === "tn-zaigen") && label.length === 2 ? 130 : TW[2];
+          const e = el("div", "tnode " + cls, hHost, label);
+          Object.assign(e.style, { left: cx - w / 2 + "px", top: top + "px", width: w + "px" });
+          return e;
+        }
+        H.forEach((m, k) => {
+          m.nodes = [];
+          m.edges = [];
+          if (m.chain) {
+            m.edges.push(sv("path", { d: "M" + mk.cx + " " + mk.bottom + " V250 H" + m.cx + " V" + LV[0], fill: "none", stroke: "#0a0a0a", "stroke-width": 4, pathLength: 1, "stroke-dasharray": 1, "stroke-dashoffset": 1 }, hEdgesEl));
+            m.chain.forEach(([lab, cls], i) => {
+              m.nodes.push(tnode(lab, cls, m.cx, LV[i]));
+              if (i > 0) m.edges.push(sv("path", { d: "M" + m.cx + " " + (LV[i - 1] + 80) + " V" + LV[i], fill: "none", stroke: "#0a0a0a", "stroke-width": 4, pathLength: 1, "stroke-dasharray": 1, "stroke-dashoffset": 1 }, hEdgesEl));
+            });
+          } else {
+            m.fan.forEach(([lab, cls, x]) => {
+              m.edges.push(sv("path", { d: "M" + mk.cx + " " + mk.bottom + " V250 H" + x + " V" + LV[0], fill: "none", stroke: "#0a0a0a", "stroke-width": 4, pathLength: 1, "stroke-dasharray": 1, "stroke-dashoffset": 1 }, hEdgesEl));
+              m.nodes.push(tnode(lab, cls, x, LV[0]));
+            });
+          }
+          const a = el("div", "ann", hHost);
+          a.style.left = m.cx - 230 + "px";
+          a.style.top = "740px";
+          el("span", "who", a, m.who);
+          el("span", "path", a, m.path);
+          m.ann = a;
+        });
+
+        // =====================================================================
+        // 3i: check
+        // =====================================================================
+        const iEdges = $("#i-edges");
+        const BL = ["u1", "u2", "u3"].map((k) => {
+          const u = G[k], j = G.j1;
+          return sv("path", { d: "M" + u.cx + " " + u.t + " V612 H" + j.cx + " V" + (j.t + j.h), fill: "none", stroke: "#2f5d43", "stroke-width": 7, "stroke-linecap": "round", pathLength: 1, "stroke-dasharray": 1, "stroke-dashoffset": 1 }, iEdges);
+        });
+        const toks = ["u1", "u2", "u3"].map((k) => {
+          const u = G[k];
+          const e = el("span", "tok", $("#i-toks"), u.am);
+          e.style.left = u.tx + "px";
+          e.style.top = u.amY + "px";
+          return e;
+        });
+        const fm = $("#i-formula");
+        const fParts = [
+          ["286,477,996", ""], ["＋", "op"], ["138,121,200", ""], ["＋", "op"], ["74,825,040", ""], ["＝", "op"], ["499,424,236", "sum"],
+        ].map(([t, c]) => el("span", c, fm, t));
+        const fCheck = el("span", "", fm);
+        fCheck.innerHTML = '<svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#2f5d43"/><path d="M18 33 L28 43 L47 22" fill="none" stroke="#fffdf8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        fCheck.style.display = "inline-block";
+        fCheck.style.height = "64px";
+        const badges = {};
+        Object.keys(G).forEach((k) => {
+          const n = G[k];
+          const b = el("div", "badge", $("#i-badges"));
+          b.innerHTML = '<svg width="46" height="46" viewBox="0 0 46 46"><circle cx="23" cy="23" r="21" fill="#2f5d43" stroke="#fffdf8" stroke-width="3"/><path d="M13 24 L20 31 L33 16" fill="none" stroke="#fffdf8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+          b.style.left = n.l + n.w - 28 + "px";
+          b.style.top = n.t - 18 + "px";
+          badges[k] = b;
+        });
+
+        // =====================================================================
+        // initial state
+        // =====================================================================
+        const allCards = W.map((w) => w.card);
+        tl.set("#f-page", { x: P0.x, y: P0.y, scale: P0.s }, 0);
+        tl.set(allCards, { opacity: 0 }, 0);
+        tl.set(peelSpec.map((p) => p.el), { opacity: 0 }, 0);
+        tl.set(Object.keys(G).map((k) => G[k].el), { opacity: 0 }, 0);
+        tl.set(H.flatMap((m) => [...m.nodes, m.ann]), { opacity: 0 }, 0);
+        tl.set([...toks, ...fParts, fCheck, ...Object.values(badges)], { opacity: 0 }, 0);
+
+        // =====================================================================
+        // 3f  文字と座標に
+        // =====================================================================
+        const f = T.f;
+        // camera: the whole page -> the rows we read
+        tl.to("#f-page", { x: PZ.x, y: PZ.y, scale: PZ.s, duration: 1.15, ease: "power3.inOut" }, f + 0.4);
+        // boxes land word by word
+        W.forEach((w, k) => {
+          tl.to(w.box, { strokeDashoffset: 0, fillOpacity: 1, duration: 0.35, ease: "power2.out" }, f + 1.75 + k * 0.2);
+        });
+        // labels are pulled out sideways, row by row
+        W.forEach((w, k) => {
+          const at = f + 3.55 + k * 0.28;
+          tl.to(w.dot, { opacity: 1, duration: 0.1 }, at);
+          tl.to(w.lead, { strokeDashoffset: 0, duration: 0.35, ease: "power2.out" }, at);
+          tl.fromTo(w.card, { opacity: 0, x: w.side === "L" ? 40 : -40 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, at + 0.18);
+        });
+        // static from ~6.2 to the cut at 7.6
+
+        // =====================================================================
+        // 3g  座標から木構造へ
+        // =====================================================================
+        const g = T.g;
+        // the words that become 款・項・目 and the second business get their boxes too
+        X.forEach((x, k) => {
+          tl.to(x.box, { strokeDashoffset: 0, fillOpacity: 1, duration: 0.3, ease: "power2.out" }, g + 0.2 + k * 0.1);
+        });
+        // labels detach: leaders and coordinates go, the page fades
+        tl.to(W.map((w) => w.lead), { strokeDashoffset: -1, duration: 0.45, ease: "power2.in" }, g + 1.1);
+        tl.to(W.map((w) => w.dot), { opacity: 0, duration: 0.3 }, g + 1.1);
+        tl.to(W.map((w) => w.xyEl), { opacity: 0, duration: 0.3 }, g + 1.1);
+        tl.to("#f-page", { opacity: 0, y: "+=40", duration: 1.1, ease: "power1.in" }, g + 1.5);
+
+        // level order top -> bottom
+        const LEVEL = { kan: 0, kou: 1, moku: 2, j1: 3, j2: 3, u1: 4, u2: 4, u3: 4 };
+        const flyAt = (k) => g + 1.3 + LEVEL[k] * 0.17;
+        const FLY = 0.95;
+        // words already labelled in 3f
+        const cardTo = { w1: ["j1", "nm"], w2: ["j1", "am"], w3: ["u1", "nm"], w4: ["u1", "am"], w5: ["u2", "nm"], w6: ["u2", "am"], w7: ["u3", "nm"], w8: ["u3", "am"] };
+        W.forEach((w) => {
+          const [k, fld] = cardTo[w.id];
+          const n = G[k];
+          const s = fld === "nm" ? 34 / 30 : 1;
+          const tx = n.tx, ty = fld === "nm" ? n.nmY : n.amY;
+          // card text origin = card + border 3 + padding (18, 12)
+          const x = tx - (w.cardL + (3 + 18) * s);
+          const y = ty - (w.cardT + (3 + 12) * s);
+          tl.to(w.card, { x: x, y: y, scale: s, transformOrigin: "0 0", duration: FLY, ease: "power3.inOut" }, flyAt(k));
+          tl.to(w.card, { borderColor: "rgba(10,10,10,0)", backgroundColor: "rgba(255,253,248,0)", duration: FLY * 0.6, ease: "power1.in" }, flyAt(k));
+          if (fld === "am") tl.to(w.cardT_el, { fontWeight: 600, duration: FLY }, flyAt(k));
+          tl.to(w.card, { opacity: 0, duration: 0.2 }, flyAt(k) + FLY - 0.05);
+        });
+        // words that peel off the page
+        peelSpec.forEach((p) => {
+          tl.set(p.el, { x: p.from.x, y: p.from.y, scale: p.from.scale }, g);
+          tl.to(p.el, { opacity: 1, duration: 0.15 }, flyAt(p.node) - 0.05);
+          tl.to(p.el, { x: 0, y: 0, scale: 1, duration: FLY, ease: "power3.inOut" }, flyAt(p.node));
+          tl.to(p.el, { opacity: 0, duration: 0.2 }, flyAt(p.node) + FLY - 0.05);
+        });
+        // node frames form around the arriving words, edges draw top-down
+        Object.keys(G).forEach((k) => {
+          tl.fromTo(G[k].el, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.3, ease: "power2.out" }, flyAt(k) + FLY - 0.25);
+        });
+        tl.set(X.map((x) => x.box).concat(W.map((w) => w.box)), { opacity: 0 }, g + 2.2);
+        ["kou", "moku", "j1", "j2", "u1", "u2", "u3"].forEach((k) => draw(edgeOf(k), flyAt(k) + FLY - 0.35, 0.35, "power1.inOut"));
+        // static from ~3.3 to the cut at 4.8
+
+        // =====================================================================
+        // 3h  1つの目から、自治体ごとに違う枝
+        // =====================================================================
+        const h = T.h;
+        const others = ["kan", "kou", "j1", "j2", "u1", "u2", "u3"];
+        tl.to(GE, { strokeDashoffset: 1, duration: 0.45, ease: "power2.in" }, h + 0.2);
+        others.forEach((k) => {
+          const n = G[k];
+          tl.to(n.el, { x: G.moku.cx - n.cx, y: G.moku.cy - n.cy, scale: 0.25, opacity: 0, duration: 0.75, ease: "power3.in" }, h + 0.3 + (4 - LEVEL[k]) * 0.04);
+        });
+        tl.to(G.moku.el, { scale: 1.06, duration: 0.15, ease: "power1.out" }, h + 1.0);
+        tl.to(G.moku.el, { scale: 1, duration: 0.25, ease: "power2.out" }, h + 1.15);
+        tl.to(G.moku.el, { x: 960 - G.moku.cx, y: MOKU_UP - G.moku.t, duration: 0.7, ease: "power3.inOut" }, h + 1.3);
+        H.forEach((m, k) => {
+          const at = h + 2.2 + k * 1.15;
+          if (m.chain) {
+            draw(m.edges[0], at, 0.4, "power2.inOut");
+            m.nodes.forEach((nd, i) => {
+              if (i > 0) draw(m.edges[i], at + 0.4 + i * 0.25 - 0.12, 0.15, "none");
+              popIn(nd, at + 0.32 + i * 0.25, { y: -10 });
+            });
+          } else {
+            m.edges.forEach((e) => draw(e, at, 0.4, "power2.inOut"));
+            m.nodes.forEach((nd, i) => popIn(nd, at + 0.32 + i * 0.08, { y: -10 }));
+          }
+          popIn(m.ann, at + 0.55);
+        });
+        // last annotation lands ~6.1; static to the cut at 8.0
+
+        // =====================================================================
+        // 3i  子の合計 ＝ 親の金額
+        // =====================================================================
+        const i0 = T.i;
+        // back to the 3g tree
+        H.forEach((m) => {
+          tl.to([...m.nodes, m.ann], { opacity: 0, y: 12, duration: 0.35, ease: "power2.in" }, i0 + 0.2);
+          tl.to(m.edges, { strokeDashoffset: 1, duration: 0.35, ease: "power2.in" }, i0 + 0.2);
+        });
+        tl.to(G.moku.el, { x: 0, y: 0, duration: 0.7, ease: "power3.inOut" }, i0 + 0.55);
+        others.forEach((k) => {
+          tl.to(G[k].el, { x: 0, y: 0, scale: 1, opacity: 1, duration: 0.75, ease: "power3.out" }, i0 + 1.2 + LEVEL[k] * 0.05);
+        });
+        tl.to(GE, { strokeDashoffset: 0, duration: 0.45, ease: "power2.out" }, i0 + 1.6);
+        // the three amounts climb the branches together and merge into the business
+        const climb = i0 + 2.55;
+        ["u1", "u2", "u3"].forEach((k, n) => {
+          const u = G[k], j = G.j1;
+          tl.to(u.amEl, { color: "#2f5d43", fontWeight: 800, duration: 0.2 }, climb);
+          // token box is ~160x29 at 0.8; centre it on the branch, start just above the node
+          const bx = (cx) => cx - 64 - u.tx, by = (y) => y - 14 - u.amY;
+          tl.set(toks[n], { x: 0, y: 0, scale: 0.8, transformOrigin: "50% 50%" }, i0);
+          tl.fromTo(toks[n], { opacity: 0, x: bx(u.cx), y: by(u.t + 6) }, { opacity: 1, y: by(u.t - 20), duration: 0.3, ease: "power2.out" }, climb + 0.15);
+          tl.to(toks[n], { keyframes: [
+            { y: by(612), duration: 0.25, ease: "power1.in" },
+            { x: bx(j.cx), duration: 0.45, ease: "power1.inOut" },
+            { y: by(j.t + j.h + 4), opacity: 0, duration: 0.3, ease: "power2.in" },
+          ] }, climb + 0.5);
+          draw(BL[n], climb + 0.3, 1.2, "power1.inOut");
+        });
+        const sumAt = climb + 1.5;
+        tl.to(G.j1.amEl, { color: "#2f5d43", fontWeight: 800, duration: 0.2 }, sumAt);
+        // the sum, written out under the tree
+        fParts.forEach((p, n) => popIn(p, climb + 0.25 + n * 0.22, { y: 10 }));
+        tl.fromTo(fCheck, { opacity: 0, scale: 0.3, transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2.4)" }, sumAt + 0.25);
+        // ✓ spreads through the tree from the checked business
+        const wave = { j1: 0, u1: 0.12, u2: 0.12, u3: 0.12, moku: 0.32, j2: 0.44, kou: 0.52, kan: 0.72 };
+        Object.keys(wave).forEach((k) => {
+          tl.fromTo(badges[k], { opacity: 0, scale: 0.3, transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, duration: 0.28, ease: "back.out(2.4)" }, sumAt + 0.75 + wave[k]);
+        });
+        // last badge settles ~5.6; static to the end at 7.2
+
+        tl.set({}, {}, T.end);
+        window.__hfCuts = T;
+        window.__timelines = window.__timelines || {};
+        window.__timelines["fudoki-odh-v2"] = tl;
+      })();
+    </script>
+  </body>
+</html>

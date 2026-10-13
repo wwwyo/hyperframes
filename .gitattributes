@@ -53,3 +53,9 @@ registry/**/*.html linguist-vendored
 # through LFS — the small MP3 stings stay plain so the example still clones and
 # renders without `git lfs pull`.
 examples/docs-reference-project/**/*.wav filter=lfs diff=lfs merge=lfs -text
+
+# 風土記 ODH Final の動画制作物（.agent/ を force-add している）。メディアとフォントは LFS に送る。
+.agent/fudoki-odh-final-motion/**/*.mp4 filter=lfs diff=lfs merge=lfs -text
+.agent/fudoki-odh-final-motion/**/*.png filter=lfs diff=lfs merge=lfs -text
+.agent/fudoki-odh-final-motion/**/*.ttf filter=lfs diff=lfs merge=lfs -text
+.agent/fudoki-odh-final-motion/**/*.otf filter=lfs diff=lfs merge=lfs -text
