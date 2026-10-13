@@ -65,4 +65,31 @@ describe("check-large-files", () => {
       assert.match(stderr, /b\.bin/);
     });
   });
+
+  // The scan loop runs in a pipeline subshell, so the violations file is the
+  // only durable signal it has. When mktemp fails — an agent sandbox that
+  // denies writes outside the workspace, a read-only or full $TMPDIR — the old
+  // script carried on with an empty path: every `>> "$violations"` wrote
+  // nowhere, `[ -s "" ]` read as "no violations", and the hook reported ✔️ on a
+  // commit it never scanned. A gate that cannot run must fail, not pass.
+  it("fails closed when it cannot create its temp file", () => {
+    withFiles({ "big.bin": bigBinary }, ({ "big.bin": path }) => {
+      const fakeBin = mkdtempSync(join(tmpdir(), "hf-nomktemp-"));
+      writeFileSync(
+        join(fakeBin, "mktemp"),
+        "#!/bin/sh\necho 'mktemp: Operation not permitted' >&2\nexit 1\n",
+        { mode: 0o755 },
+      );
+      try {
+        const result = spawnSync(SCRIPT, [path], {
+          encoding: "utf-8",
+          env: { ...process.env, PATH: `${fakeBin}:${process.env.PATH}` },
+        });
+        assert.notEqual(result.status, 0);
+        assert.match(result.stderr, /could not create a temporary file/);
+      } finally {
+        rmSync(fakeBin, { recursive: true, force: true });
+      }
+    });
+  });
 });
