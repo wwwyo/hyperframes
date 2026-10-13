@@ -35,7 +35,20 @@ list_files() {
   fi
 }
 
+# The violations file is this script's only durable signal (the scan loop runs in
+# a pipeline subshell, so it cannot set a parent-shell flag). If the temp file
+# never appears, every `>> "$violations"` writes nowhere, `[ -s ... ]` at the end
+# reads as "no violations", and the hook reports success on a commit it never
+# scanned. Fail closed instead: an agent sandbox that denies writes outside the
+# workspace, a read-only or full $TMPDIR, or a broken mktemp on PATH are all
+# normal environments for this hook to run in.
 violations="$(mktemp)"
+if [ ! -f "$violations" ]; then
+  echo "ERROR: could not create a temporary file for the large-file scan." >&2
+  echo "       mktemp gave '${violations}' — check \$TMPDIR. Refusing to report" >&2
+  echo "       success for a scan that did not run." >&2
+  exit 1
+fi
 trap 'rm -f "$violations"' EXIT INT TERM
 
 list_files "$@" | while IFS= read -r f; do
