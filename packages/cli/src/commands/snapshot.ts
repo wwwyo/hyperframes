@@ -876,7 +876,7 @@ export default defineCommand({
     describe: {
       type: "string",
       description:
-        "Gemini vision frame analysis. Runs by default when GEMINI_API_KEY is set. Pass a custom question (e.g. --describe 'Is the logo visible in every beat?') to override the default prompt, or --describe false to opt out.",
+        "Gemini vision frame analysis (opt-in: sends the captured frames to Gemini; needs GEMINI_API_KEY or GOOGLE_API_KEY). Pass --describe true for the default prompt, or a custom question (e.g. --describe 'Is the logo visible in every beat?') to override it.",
     },
     proxy: {
       type: "boolean",
@@ -928,16 +928,18 @@ export default defineCommand({
           .map((s) => parseFloat(s.trim()))
           .filter((n) => !isNaN(n))
       : undefined;
-    // Gemini frame analysis runs by default (silently skipped if
-    // GEMINI_API_KEY is not set). `--describe "custom question"` overrides
-    // the default prompt with a targeted question. `--describe false` opts
-    // out entirely.
+    // Gemini frame analysis is opt-in: it uploads the captured frames to a
+    // third-party API, so it never runs just because a key happens to be in
+    // the environment. `--describe true` (or a trailing bare `--describe`)
+    // uses the default prompt; `--describe "custom question"` asks a
+    // targeted question instead.
+    const rawDescribe = args.describe === undefined ? undefined : String(args.describe);
     const describeArg =
-      args.describe === undefined
-        ? "true"
-        : String(args.describe) === "false"
-          ? null
-          : String(args.describe);
+      rawDescribe === undefined || rawDescribe === "false"
+        ? null
+        : rawDescribe === ""
+          ? "true"
+          : rawDescribe;
 
     const camera = args.angle ? parseAngle(String(args.angle)) : undefined;
     const zoomTarget = args.zoom ? parseZoomTarget(String(args.zoom)) : undefined;
@@ -1012,9 +1014,9 @@ export default defineCommand({
         );
       }
 
-      // Gemini vision descriptions. Runs by default — see describeArg
-      // resolution above. `null` means the user explicitly opted out with
-      // `--describe false`; missing GEMINI_API_KEY logs a skip and continues.
+      // Gemini vision descriptions. Opt-in — see describeArg resolution
+      // above. `null` means `--describe` was not passed (or was `false`);
+      // missing GEMINI_API_KEY logs a skip and continues.
       if (describeArg !== null) {
         try {
           const geminiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
