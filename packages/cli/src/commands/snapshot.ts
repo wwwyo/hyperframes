@@ -928,11 +928,8 @@ export default defineCommand({
           .map((s) => parseFloat(s.trim()))
           .filter((n) => !isNaN(n))
       : undefined;
-    // Gemini frame analysis is opt-in: it uploads the captured frames to a
-    // third-party API, so it never runs just because a key happens to be in
-    // the environment. `--describe true` (or a trailing bare `--describe`)
-    // uses the default prompt; `--describe "custom question"` asks a
-    // targeted question instead.
+    // Opt-in: frames go to a third-party API, so a key in the environment is
+    // not consent. A bare trailing `--describe` means `true`.
     const rawDescribe = args.describe === undefined ? undefined : String(args.describe);
     const describeArg =
       rawDescribe === undefined || rawDescribe === "false"
