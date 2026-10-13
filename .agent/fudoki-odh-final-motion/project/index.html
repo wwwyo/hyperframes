@@ -14,18 +14,14 @@
       }
       @font-face {
         font-family: "Garble";
-        src: local("HiraginoSansGB-W6");
+        src: local("HiraginoSansGB-W3");
         unicode-range: U+3400-4DBF;
       }
       @font-face {
-        font-family: "Garble";
-        src: url("assets/fonts/garble/AppleSymbols.ttf") format("truetype");
-        unicode-range: U+2972, U+2ACB, U+2674, U+2925;
-      }
-      @font-face {
+        /* 記号は OFL の STIX Two Math で描く（Apple Symbols の ⫋ は横倒しに描かれ、再配布もできない） */
         font-family: "Garble";
         src: url("assets/fonts/garble/STIXTwoMath.otf") format("opentype");
-        unicode-range: U+269F;
+        unicode-range: U+2972, U+2ACB, U+2674, U+2925, U+269F;
       }
       @font-face {
         font-family: "Garble";
@@ -166,10 +162,10 @@
       }
       #b-panel {
         position: absolute;
-        left: 1404px;
-        top: 220px;
-        width: 436px;
-        height: 580px;
+        left: 880px;
+        top: 700px;
+        width: 980px;
+        height: 330px;
         background: #fffdf8;
         border: 2px solid #d8d2c2;
         border-radius: 14px;
@@ -185,13 +181,12 @@
       }
       .g-line {
         position: absolute;
-        left: 28px;
-        width: 390px;
+        width: 460px;
       }
       .g-text {
         display: block;
         font-family: "Garble", "Noto Sans JP", sans-serif;
-        font-size: 58px;
+        font-size: 54px;
         line-height: 1.1;
         font-weight: 400;
         white-space: nowrap;
@@ -199,17 +194,18 @@
       }
       .g-orig {
         display: block;
-        margin-top: 16px;
-        font-size: 26px;
+        margin-top: 18px;
+        font-size: 24px;
         line-height: 1.2;
         font-weight: 600;
         color: #6b6b6b;
         white-space: nowrap;
       }
       #b-nonum {
-        left: 700px;
-        top: 840px;
-        font-size: 64px;
+        left: 60px;
+        top: 790px;
+        font-size: 72px;
+        line-height: 1.3;
         color: #c1553a;
       }
       .hl {
@@ -294,23 +290,23 @@
 
       <!-- ============ 3b ============ -->
       <div data-hf-id="hf-jbe2" id="s3b" class="scene">
-        <div data-hf-id="hf-rj81" id="b-left" class="abs" style="left: 0; top: 0; width: 680px; height: 1080px">
-          <div data-hf-id="hf-xrd4" id="b-scan" class="sheet" style="left: 80px; top: 220px; width: 560px; height: 396px">
+        <div data-hf-id="hf-rj81" id="b-left" class="abs" style="left: 0; top: 0; width: 840px; height: 1080px">
+          <div data-hf-id="hf-xrd4" id="b-scan" class="sheet" style="left: 60px; top: 180px; width: 760px; height: 538px">
             <img data-hf-id="hf-m3vo" src="assets/img/scan-empty.png" alt="">
           </div>
           <div data-hf-id="hf-e83r" id="b-marquee" style="left: 150px; top: 300px; width: 10px; height: 10px"></div>
-          <div data-hf-id="hf-wm2g" id="b-cap-l" class="label b-caption" style="left: 80px; top: 640px">テキストがない</div>
+          <div data-hf-id="hf-wm2g" id="b-cap-l" class="label b-caption" style="left: 60px; top: 60px">テキストがない</div>
         </div>
         <div data-hf-id="hf-mmuq" id="b-right" class="abs" style="left: 0; top: 0; width: 1920px; height: 1080px">
-          <div data-hf-id="hf-qwir" id="b-table" class="sheet" style="left: 700px; top: 220px; width: 660px; height: 332px">
+          <div data-hf-id="hf-qwir" id="b-table" class="sheet" style="left: 880px; top: 180px; width: 980px; height: 493px">
             <img data-hf-id="hf-i0wu" src="assets/img/garbled-print.png" alt="">
           </div>
-          <div data-hf-id="hf-nnqb" id="b-hls" class="abs" style="left: 700px; top: 220px; width: 660px; height: 332px"></div>
-          <div data-hf-id="hf-7evj" id="b-cap-r" class="label b-caption" style="left: 700px; top: 640px">あっても文字化け</div>
+          <div data-hf-id="hf-nnqb" id="b-hls" class="abs" style="left: 880px; top: 180px; width: 980px; height: 493px"></div>
+          <div data-hf-id="hf-7evj" id="b-cap-r" class="label b-caption" style="left: 880px; top: 60px">あっても文字化け</div>
           <div data-hf-id="hf-2gpo" id="b-panel">
             <div data-hf-id="hf-y6gx" id="b-panel-head">貼り付けると</div>
           </div>
-          <div data-hf-id="hf-tlez" id="b-nonum" class="label">金額の数字は、1つも出てこない</div>
+          <div data-hf-id="hf-tlez" id="b-nonum" class="label">金額の数字は、<br>1つも出てこない</div>
           <div data-hf-id="hf-7lym" id="b-copy">コピー</div>
         </div>
         <svg data-hf-id="hf-19yz" id="b-cursor" class="abs" style="left: 0; top: 0" width="34" height="64" viewBox="0 0 34 64">
@@ -368,7 +364,7 @@
 
       <!-- ============ 3d ============ -->
       <div data-hf-id="hf-zs0k" id="s3d" class="scene">
-        <div data-hf-id="hf-dksk" id="d-A" class="abs" style="left: 0; top: 0; width: 3076px; height: 1674px; transform-origin: 0 0">
+        <div data-hf-id="hf-dksk" id="d-A" class="abs" style="left: 0; top: 0; width: 3076px; height: 1674px; transform-origin: 0 0; clip-path: inset(40px 0 734px 0)">
           <div data-hf-id="hf-jsn1" class="sheet" style="left: 0; top: 0; width: 1515px; height: 1674px">
             <img data-hf-id="hf-d07l" src="assets/img/a-220.png" alt="">
           </div>
@@ -380,9 +376,9 @@
             <rect data-hf-id="hf-elx7" id="dA-blue" x="2001" y="364" width="1056" height="550" fill="rgba(44,90,133,0.10)" stroke="#2c5a85" stroke-width="22" pathLength="1" />
           </svg>
           <div data-hf-id="hf-4t31" id="dA-tag-red" class="chip" style="left: 40px; top: 360px; font-size: 180px; color: #c1553a; border-width: 16px; border-color: #c1553a; padding: 26px 40px">目</div>
-          <div data-hf-id="hf-6789" id="dA-tag-blue" class="chip" style="left: 2001px; top: 960px; font-size: 180px; color: #2c5a85; border-width: 16px; border-color: #2c5a85; padding: 26px 40px">事業</div>
+          <div data-hf-id="hf-6789" id="dA-tag-blue" class="chip" style="left: 1580px; top: 560px; font-size: 180px; color: #2c5a85; border-width: 16px; border-color: #2c5a85; padding: 26px 40px">事業</div>
         </div>
-        <div data-hf-id="hf-g866" id="d-B" class="abs" style="left: 0; top: 0; width: 3471px; height: 2271px; transform-origin: 0 0">
+        <div data-hf-id="hf-g866" id="d-B" class="abs" style="left: 0; top: 0; width: 3471px; height: 2271px; transform-origin: 0 0; clip-path: inset(1000px 0 0 0)">
           <div data-hf-id="hf-yuk4" class="sheet" style="left: 0; top: 0; width: 3471px; height: 2271px">
             <img data-hf-id="hf-sitq" src="assets/img/b32.png" alt="">
           </div>
@@ -393,8 +389,8 @@
           <div data-hf-id="hf-jgx1" id="dB-tag-red" class="chip" style="left: 420px; top: 1180px; font-size: 180px; color: #c1553a; border-width: 16px; border-color: #c1553a; padding: 26px 40px">目</div>
           <div data-hf-id="hf-y80i" id="dB-tag-blue" class="chip" style="left: 2240px; top: 1960px; font-size: 180px; color: #2c5a85; border-width: 16px; border-color: #2c5a85; padding: 26px 40px">事業</div>
         </div>
-        <div data-hf-id="hf-qb93" id="d-lab-A" class="label" style="left: 60px; top: 186px; font-size: 64px">ある市</div>
-        <div data-hf-id="hf-ozkb" id="d-lab-B" class="label" style="left: 929px; top: 186px; font-size: 64px">別のある区</div>
+        <div data-hf-id="hf-qb93" id="d-lab-A" class="label" style="left: 0; top: 0; font-size: 52px">ある市</div>
+        <div data-hf-id="hf-ozkb" id="d-lab-B" class="label" style="left: 0; top: 0; font-size: 52px">別のある区</div>
       </div>
 
       <!-- ============ 3e ============ -->
@@ -492,18 +488,19 @@
 
         popIn("#b-scan", b + 0.75, { y: 30 });
         // drag across the scan -> nothing selects
-        const scanX = 80, scanY = 220;
-        tl.set("#b-cursor", { x: scanX + 70, y: scanY + 70, opacity: 0 }, b);
+        const scanX = 60, scanY = 180, sk = 760 / 560; // scan box scale vs. the original 560px layout
+        tl.set("#b-cursor", { x: scanX + 70 * sk, y: scanY + 70 * sk, opacity: 0 }, b);
         tl.to("#b-cursor", { opacity: 1, duration: 0.2 }, b + 1.3);
-        tl.set("#b-marquee", { opacity: 1, left: scanX + 86, top: scanY + 100, width: 4, height: 4 }, b + 1.6);
-        tl.to("#b-cursor", { x: scanX + 470, y: scanY + 300, duration: 1.0, ease: "power1.inOut" }, b + 1.6);
-        tl.to("#b-marquee", { width: 400, height: 232, duration: 1.0, ease: "power1.inOut" }, b + 1.6);
+        tl.set("#b-marquee", { opacity: 1, left: scanX + 86 * sk, top: scanY + 100 * sk, width: 4, height: 4 }, b + 1.6);
+        tl.to("#b-cursor", { x: scanX + 470 * sk, y: scanY + 300 * sk, duration: 1.0, ease: "power1.inOut" }, b + 1.6);
+        tl.to("#b-marquee", { width: 400 * sk, height: 232 * sk, duration: 1.0, ease: "power1.inOut" }, b + 1.6);
         tl.to("#b-marquee", { keyframes: [{ opacity: 0.15 }, { opacity: 0.9 }, { opacity: 0.15 }, { opacity: 0 }], duration: 0.5, ease: "none" }, b + 2.75);
         popIn("#b-cap-l", b + 3.1);
 
         // table: drag-select the first three rows (目 + 節 + amounts)
         popIn("#b-table", b + 3.6, { y: 30 });
-        const tk = 660 / 1431; // table image scale
+        const tk = 980 / 1431; // table image scale
+        const tX = 880, tY = 180;
         const rows = [
           { x0: 10, x1: 1420, y: 254 },
           { x0: 930, x1: 1420, y: 316 },
@@ -521,10 +518,10 @@
           hlHost.appendChild(d);
           tl.fromTo(d, { opacity: 0, scaleX: 0, transformOrigin: "0% 50%" }, { opacity: 1, scaleX: 1, duration: 0.28, ease: "power1.out" }, b + 4.45 + i * 0.26);
         });
-        tl.set("#b-cursor", { x: 700 + 6, y: 220 + 222 * tk - 4 }, b + 4.0);
+        tl.set("#b-cursor", { x: tX + 6, y: tY + 222 * tk - 4 }, b + 4.0);
         tl.to("#b-cursor", { opacity: 1, duration: 0.2 }, b + 4.1);
-        tl.to("#b-cursor", { x: 700 + 1415 * tk, y: 220 + 400 * tk - 30, duration: 0.95, ease: "power1.inOut" }, b + 4.4);
-        tl.set("#b-copy", { left: 700 + 1415 * tk - 40, top: 220 + 400 * tk + 44 }, b);
+        tl.to("#b-cursor", { x: tX + 1415 * tk, y: tY + 400 * tk - 30, duration: 0.95, ease: "power1.inOut" }, b + 4.4);
+        tl.set("#b-copy", { left: tX + 1415 * tk - 120, top: tY + 400 * tk + 30 }, b);
         popIn("#b-copy", b + 5.45, { y: 8 });
         tl.to("#b-cursor", { opacity: 0, duration: 0.2 }, b + 5.45);
 
@@ -540,7 +537,9 @@
           const wrap = document.createElement("div");
           wrap.className = "g-line";
           wrap.id = "b-g" + i;
-          wrap.style.top = 84 + i * 118 + "px";
+          // 2 x 2: 高齢福祉総務費・報酬 / 給料・職員手当等
+          wrap.style.left = 28 + (i % 2) * 480 + "px";
+          wrap.style.top = 66 + Math.floor(i / 2) * 134 + "px";
           const t = document.createElement("span");
           t.className = "g-text";
           if (i === 2) {
@@ -621,13 +620,16 @@
         // =====================================================================
         const d = T.d;
         tl.to(["#v-cam", "#v-lab-blue", "#v-lab-red"], { opacity: 0, y: "+=30", duration: 0.5, ease: "power2.in" }, d + 0.15);
-        const ds = 0.7986 / 3; // same px-per-pt for both documents
-        const ax = 60, bx = 60 + 3076 * ds + 50, dy = 286;
-        $("#d-lab-B").style.left = bx + "px";
-        tl.set("#d-A", { x: ax, y: dy, scale: ds }, 0);
-        tl.set("#d-B", { x: bx, y: dy, scale: ds }, 0);
-        tl.fromTo("#d-A", { opacity: 0, y: dy + 60 }, { opacity: 1, y: dy, duration: 0.7, ease: "power3.out" }, d + 0.5);
-        tl.fromTo("#d-B", { opacity: 0, y: dy + 60 }, { opacity: 1, y: dy, duration: 0.7, ease: "power3.out" }, d + 0.6);
+        // same px-per-pt for both documents; stacked and cropped (clip-path) to the 目〜事業 rows so they can be large
+        const ds = 0.44;
+        const ax = 60, bx = 60, topA = 44, topB = topA + 900 * ds + 36;
+        const ay = topA - 40 * ds, by = topB - 1000 * ds;
+        Object.assign($("#d-lab-A").style, { left: ax + 3076 * ds + 32 + "px", top: topA + 8 + "px" });
+        Object.assign($("#d-lab-B").style, { left: bx + 3471 * ds + 32 + "px", top: topB + 8 + "px" });
+        tl.set("#d-A", { x: ax, y: ay, scale: ds }, 0);
+        tl.set("#d-B", { x: bx, y: by, scale: ds }, 0);
+        tl.fromTo("#d-A", { opacity: 0, y: ay + 60 }, { opacity: 1, y: ay, duration: 0.7, ease: "power3.out" }, d + 0.5);
+        tl.fromTo("#d-B", { opacity: 0, y: by + 60 }, { opacity: 1, y: by, duration: 0.7, ease: "power3.out" }, d + 0.6);
         popIn("#d-lab-A", d + 0.75);
         popIn("#d-lab-B", d + 0.85);
         boxIn(["#dA-red", "#dB-red"], d + 1.5, 0.4);
@@ -678,8 +680,8 @@
         // the two spreads shrink into their tiles
         tl.to(["#d-lab-A", "#d-lab-B", "#dA-tag-red", "#dA-tag-blue", "#dB-tag-red", "#dB-tag-blue"], { opacity: 0, duration: 0.3 }, e + 0.15);
         const cx = (i) => (i % COLS) * CW, cy = (i) => Math.floor(i / COLS) * CH;
-        tl.to("#d-A", { x: cx(cellA), y: cy(cellA), scale: 128 / 1515, duration: 0.85, ease: "power3.inOut" }, e + 0.25);
-        tl.to("#d-B", { x: cx(cellB) - 64, y: cy(cellB) + 6, scale: 256 / 3471, duration: 0.85, ease: "power3.inOut" }, e + 0.25);
+        tl.to("#d-A", { x: cx(cellA), y: cy(cellA) + CH / 2 - (40 + 450) * (128 / 1515), scale: 128 / 1515, duration: 0.85, ease: "power3.inOut" }, e + 0.25);
+        tl.to("#d-B", { x: cx(cellB) - 64, y: cy(cellB) + CH / 2 - (1000 + 635) * (256 / 3471), scale: 256 / 3471, duration: 0.85, ease: "power3.inOut" }, e + 0.25);
         tl.to([tA, tB], { opacity: 1, duration: 0.25 }, e + 0.92);
         tl.to(["#d-A", "#d-B"], { opacity: 0, duration: 0.25 }, e + 0.92);
         // then the rest, one by one, accelerating
