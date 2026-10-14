@@ -38,6 +38,7 @@ import snapshotCommand, {
   parseZoomScale,
   recaptureSnapshotComposite,
   requireSnapshotFfmpeg,
+  resolveDescribeArg,
   resolveSnapshotVideoClipStart,
   resolveSnapshotVideoFrameTime,
   resolveSnapshotVideoRateSpec,
@@ -874,6 +875,27 @@ describe("parseZoomScale (--zoom-scale)", () => {
     expect(parseZoomScale("abc")).toBe(3);
     expect(parseZoomScale("0")).toBe(3);
     expect(parseZoomScale("-1")).toBe(3);
+  });
+});
+
+describe("resolveDescribeArg (--describe is opt-in)", () => {
+  it("sends nothing when the flag is omitted — an ambient API key is not consent", () => {
+    expect(resolveDescribeArg(undefined)).toBeNull();
+  });
+
+  it("sends nothing for an explicit false", () => {
+    expect(resolveDescribeArg("false")).toBeNull();
+  });
+
+  it("treats a bare trailing flag as the default prompt", () => {
+    expect(resolveDescribeArg("")).toBe("true");
+  });
+
+  it("passes true and a custom question through", () => {
+    expect(resolveDescribeArg("true")).toBe("true");
+    expect(resolveDescribeArg("Is the logo visible in every beat?")).toBe(
+      "Is the logo visible in every beat?",
+    );
   });
 });
 
