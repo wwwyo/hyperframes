@@ -371,6 +371,12 @@ export function parseZoomScale(value: unknown): number {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_ZOOM_SCALE;
 }
 
+export function resolveDescribeArg(raw: string | undefined): string | null {
+  if (raw === undefined || raw === "false") return null;
+  if (raw === "") return "true";
+  return raw;
+}
+
 /**
  * Seeking the timeline to EXACTLY `data-duration` renders blank — the runtime
  * treats t >= clip-end as past-end and unmounts the clip (verified on a V4 3D
@@ -930,13 +936,9 @@ export default defineCommand({
       : undefined;
     // Opt-in: frames go to a third-party API, so a key in the environment is
     // not consent. A bare trailing `--describe` means `true`.
-    const rawDescribe = args.describe === undefined ? undefined : String(args.describe);
-    const describeArg =
-      rawDescribe === undefined || rawDescribe === "false"
-        ? null
-        : rawDescribe === ""
-          ? "true"
-          : rawDescribe;
+    const describeArg = resolveDescribeArg(
+      args.describe === undefined ? undefined : String(args.describe),
+    );
 
     const camera = args.angle ? parseAngle(String(args.angle)) : undefined;
     const zoomTarget = args.zoom ? parseZoomTarget(String(args.zoom)) : undefined;
