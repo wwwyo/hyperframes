@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>7 アーキテクチャ — 図</title>
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+        }
+        .s7-card {
+          position: absolute;
+          background: #fff;
+          border-radius: 16px;
+          box-shadow: var(--shadow-1);
+          padding: 20px 24px;
+        }
+        .s7-ttl {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          font-size: 28px;
+          font-weight: 600;
+          line-height: 1.3;
+        }
+        .s7-ttl img,
+        .s7-ttl svg {
+          width: 44px;
+          height: 44px;
+          flex: none;
+        }
+        .s7-ln {
+          font-size: 22px;
+          line-height: 1.45;
+          color: var(--ink2);
+        }
+        .s7-ttl + .s7-ln {
+          margin-top: 10px;
+        }
+        .s7-box {
+          position: absolute;
+          border-radius: 12px;
+          padding: 16px 20px;
+          background: var(--bg2);
+          border: 1px solid #e8eaed;
+        }
+        .s7-box .bt {
+          font-size: 24px;
+          font-weight: 600;
+          line-height: 1.4;
+          margin-bottom: 4px;
+        }
+        .s7-box.blue {
+          background: var(--blue-tint);
+          border: none;
+          border-left: 6px solid var(--blue);
+        }
+        .s7-box.green {
+          background: var(--green-tint);
+          border: none;
+          border-left: 6px solid var(--green);
+        }
+        .s7-box.blue .em {
+          color: var(--blue-ink);
+        }
+        .s7-box.green .em {
+          color: var(--green-ink);
+        }
+        #s7-gcp {
+          position: absolute;
+          left: 500px;
+          top: 160px;
+          width: 1340px;
+          height: 770px;
+          border-radius: 18px;
+          background: #fff;
+          border: 1.5px solid var(--line);
+          overflow: hidden;
+        }
+        #s7-gcp .bar {
+          height: 48px;
+          padding: 0 24px;
+          display: flex;
+          align-items: center;
+          background: var(--bg3);
+          font-size: 24px;
+          font-weight: 600;
+          color: #3c4043;
+        }
+      </style>
+
+      <div id="root" data-composition-id="s7-diagram" data-width="1920" data-height="1080">
+        <!-- 左: 人と Google Calendar -->
+        <div id="s7-person" class="s7-card" style="left: 80px; top: 170px; width: 340px; height: 150px">
+          <div class="s7-ttl">人（本人・審査員）</div>
+          <div class="s7-ln">カレンダーに予定を書く</div>
+          <div class="s7-ln">dashboard で承認する</div>
+        </div>
+        <div id="s7-cal" class="s7-card" style="left: 80px; top: 380px; width: 340px; height: 540px">
+          <div class="s7-ttl">
+            <img src="assets/icons/google_calendar.svg" alt="">Google Calendar
+          </div>
+        </div>
+        <div id="s7-cal-a" class="s7-box blue" style="left: 100px; top: 460px; width: 300px; height: 200px">
+          <div class="bt">起動用カレンダー</div>
+          <div class="s7-ln">頼みたい仕事を</div>
+          <div class="s7-ln">自然言語で書く</div>
+          <div class="s7-ln em">命令として読む</div>
+          <div class="s7-ln em">（作成者 allowlist）</div>
+        </div>
+        <div id="s7-cal-r" class="s7-box green" style="left: 100px; top: 680px; width: 300px; height: 220px">
+          <div class="bt">記録用カレンダー</div>
+          <div class="s7-ln">締切 +「準備: 30日前」</div>
+          <div class="s7-ln em">事実として扱う</div>
+          <div class="s7-ln">notes は信頼しない</div>
+          <div class="s7-ln">データとして渡す</div>
+        </div>
+
+        <!-- 右: Google Cloud -->
+        <div id="s7-gcp"><div class="bar">Google Cloud</div></div>
+        <div id="s7-sched" class="s7-card" style="left: 530px; top: 230px; width: 340px; height: 140px">
+          <div class="s7-ttl">
+            <img src="assets/icons/cloud_scheduler.svg" alt="">Cloud Scheduler
+          </div>
+          <div class="s7-ln">1 分ごとに /tick（OIDC）</div>
+        </div>
+        <div id="s7-log" class="s7-card" style="left: 530px; top: 450px; width: 340px; height: 160px">
+          <div class="s7-ttl"><img src="assets/icons/cloud_logging.svg" alt="">Cloud Logging</div>
+          <div class="s7-ln">構造化ログ</div>
+          <div class="s7-ln">同期・発火・tool・token</div>
+        </div>
+        <div id="s7-run" class="s7-card" style="left: 940px; top: 230px; width: 870px; height: 450px">
+          <div class="s7-ttl">
+            <img src="assets/icons/cloud_run.svg" alt="">Cloud Run — runner（Bun + TypeScript）
+          </div>
+        </div>
+        <div id="s7-tick" class="s7-box" style="left: 966px; top: 300px; width: 400px; height: 190px">
+          <div class="bt">/tick</div>
+          <div class="s7-ln">syncToken で差分を取得</div>
+          <div class="s7-ln">LLM で実行先と内容を判定</div>
+          <div class="s7-ln">発火予定の計算・予約</div>
+          <div class="s7-ln">同じ回は一度だけ</div>
+        </div>
+        <div id="s7-agent" class="s7-box" style="left: 1386px; top: 300px; width: 400px; height: 190px">
+          <div class="bt">agent 実行（準備）</div>
+          <div class="s7-ln">tool は allowlist</div>
+          <div class="s7-ln">読み取り + 提案だけ</div>
+          <div class="s7-ln">notes は &lt;untrusted&gt;</div>
+        </div>
+        <div id="s7-dash" class="s7-box" style="left: 966px; top: 505px; width: 820px; height: 160px">
+          <div class="bt">dashboard</div>
+          <div class="s7-ln">週表示 / セッション（入力・tool・出力）/ 承認待ち</div>
+          <div class="s7-ln">デモ用フォーム: レート制限・文字数上限・自動削除</div>
+          <div class="s7-ln">承認したときだけ記録用カレンダーに書く</div>
+        </div>
+        <div id="s7-fs" class="s7-card" style="left: 530px; top: 740px; width: 380px; height: 160px">
+          <div class="s7-ttl"><img src="assets/icons/firestore.svg" alt="">Firestore</div>
+          <div class="s7-ln">予定・発火予定・判定結果</div>
+          <div class="s7-ln">セッション・承認待ち・token</div>
+        </div>
+        <div id="s7-vx" class="s7-card" style="left: 960px; top: 740px; width: 400px; height: 160px">
+          <div class="s7-ttl"><img src="assets/icons/vertexai.svg" alt="">Vertex AI</div>
+          <div class="s7-ln">Gemini 2.5 Flash</div>
+          <div class="s7-ln">service account・API key なし</div>
+        </div>
+        <div id="s7-job" class="s7-card" style="left: 1410px; top: 740px; width: 400px; height: 160px">
+          <!-- Cloud Run と同じ公式アイコン。同じ img を 2 つ置くと media の重複検出に掛かるので inline にする -->
+          <div class="s7-ttl">
+            <svg viewBox="0 0 24 24">
+              <polygon fill="#aecbfa" points="8.9 2.63 12.02 12 21.38 12 8.9 2.63" />
+              <polygon fill="#4285f4" points="21.38 12 12.02 12 8.9 21.38 21.38 12" />
+              <polygon fill="#4285f4" points="3.44 21.38 6.57 19.81 8.9 12 5.78 12 3.44 21.38" />
+              <polygon fill="#aecbfa" points="3.44 2.63 5.78 12 8.9 12 6.57 4.19 3.44 2.63" /></svg>Cloud Run Job
+          </div>
+          <div class="s7-ln">実行ごとの sandbox</div>
+          <div class="s7-ln">権限なし・LLM は proxy 経由</div>
+        </div>
+      </div>
+
+      <script>
+        (function () {
+          const tl = gsap.timeline({ paused: true });
+          const all = [
+            "#s7-person",
+            "#s7-cal",
+            "#s7-cal-a",
+            "#s7-cal-r",
+            "#s7-gcp",
+            "#s7-sched",
+            "#s7-log",
+            "#s7-run",
+            "#s7-tick",
+            "#s7-agent",
+            "#s7-dash",
+            "#s7-fs",
+            "#s7-vx",
+            "#s7-job",
+          ];
+          gsap.set(all, { opacity: 0 });
+          const pop = (sel, t) =>
+            tl.fromTo(
+              sel,
+              { y: 30, opacity: 0 },
+              { y: 0, opacity: 1, duration: 0.45, stagger: 0.08, ease: "power4.out" },
+              t,
+            );
+          // 1 人と Google Calendar
+          pop(["#s7-person", "#s7-cal"], 0.5);
+          pop(["#s7-cal-a", "#s7-cal-r"], 0.8);
+          // 2 Google Cloud の枠、Cloud Scheduler と Cloud Run
+          tl.fromTo(
+            "#s7-gcp",
+            { opacity: 0, scale: 0.98 },
+            { opacity: 1, scale: 1, duration: 0.45, ease: "power3.out" },
+            2.5,
+          );
+          pop(["#s7-sched", "#s7-run"], 2.7);
+          pop(["#s7-tick", "#s7-agent", "#s7-dash"], 3.0);
+          // 4〜7 Firestore、Vertex AI、Cloud Run Job、Cloud Logging
+          pop("#s7-fs", 7.0);
+          pop("#s7-vx", 9.0);
+          pop("#s7-job", 11.0);
+          pop("#s7-log", 13.0);
+          window.__timelines["s7-diagram"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

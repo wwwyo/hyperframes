@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>7 アーキテクチャ — 線</title>
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+        }
+        #s7-svg {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1920px;
+          height: 1080px;
+          overflow: visible;
+        }
+        .s7-lbl {
+          position: absolute;
+          font-size: 22px;
+          color: var(--ink2);
+          white-space: nowrap;
+          background: var(--bg2);
+          padding: 0 8px;
+        }
+        .s7-lbl.on-white {
+          background: #fff;
+        }
+        .s7-lbl.red {
+          color: var(--red-ink);
+          background: #fff;
+        }
+      </style>
+
+      <div id="root" data-composition-id="s7-edges" data-width="1920" data-height="1080">
+        <svg id="s7-svg" viewBox="0 0 1920 1080"><defs id="s7-defs" /></svg>
+        <div id="s7-l2" class="s7-lbl" style="left: 980px; top: 100px">閲覧・承認・予定の追加</div>
+        <div id="s7-l4" class="s7-lbl on-white" style="left: 548px; top: 376px">
+          service account で差分を読む
+        </div>
+        <div id="s7-l9" class="s7-lbl red" style="left: 548px; top: 676px">
+          承認したときだけ書く
+        </div>
+      </div>
+
+      <script>
+        (function () {
+          const tl = gsap.timeline({ paused: true });
+          const NS = "http://www.w3.org/2000/svg";
+          const svg = document.getElementById("s7-svg");
+          const defs = document.getElementById("s7-defs");
+
+          // 線: d は path、tip は矢の先、from は先の手前の点（矢の向き）、t は描き始め、dur は描く長さ
+          const edges = [
+            { id: "e1", d: "M250 320 V 370", from: [250, 360], tip: [250, 376], t: 0.9, dur: 0.35 },
+            { id: "e3", d: "M870 300 H 930", from: [920, 300], tip: [936, 300], t: 3.1, dur: 0.35 },
+            {
+              id: "e4",
+              d: "M420 600 C 480 600, 480 410, 600 410 H 930",
+              from: [920, 410],
+              tip: [936, 410],
+              t: 5.0,
+              dur: 0.7,
+            },
+            {
+              id: "e6",
+              d: "M1000 682 L 772 734",
+              from: [1000, 682],
+              tip: [766, 736],
+              t: 7.2,
+              dur: 0.4,
+            },
+            {
+              id: "e7",
+              d: "M1160 682 V 730",
+              from: [1160, 720],
+              tip: [1160, 736],
+              t: 9.2,
+              dur: 0.3,
+            },
+            {
+              id: "e8",
+              d: "M1610 682 V 730",
+              from: [1610, 720],
+              tip: [1610, 736],
+              t: 11.2,
+              dur: 0.3,
+            },
+            { id: "e5", d: "M940 560 H 880", from: [890, 560], tip: [874, 560], t: 13.2, dur: 0.3 },
+            {
+              id: "e2",
+              d: "M420 215 H 460 V 128 H 1370 V 220",
+              from: [1370, 210],
+              tip: [1370, 226],
+              t: 13.3,
+              dur: 0.8,
+            },
+            {
+              id: "e9",
+              d: "M962 640 H 920 V 712 H 460 V 800 H 430",
+              from: [440, 800],
+              tip: [424, 800],
+              t: 13.5,
+              dur: 0.9,
+              red: true,
+            },
+          ];
+          function el(name, attrs) {
+            const n = document.createElementNS(NS, name);
+            Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v));
+            return n;
+          }
+          function arrowHead(from, tip, color) {
+            const a = Math.atan2(tip[1] - from[1], tip[0] - from[0]);
+            const bx = tip[0] - 16 * Math.cos(a);
+            const by = tip[1] - 16 * Math.sin(a);
+            const s = 8 * Math.sin(a);
+            const c = 8 * Math.cos(a);
+            const pts = [tip, [bx + s, by - c], [bx - s, by + c]];
+            return el("polygon", { points: pts.map((p) => p.join(",")).join(" "), fill: color });
+          }
+          edges.forEach((e) => {
+            const color = e.red ? "#ea4335" : "#5f6368";
+            const path = el("path", { d: e.d, fill: "none", stroke: color, "stroke-width": "3" });
+            // 線が伸びる動き: pathLength=1 の dash をずらす。点線は mask の実線を伸ばして描く
+            const grow = el("path", {
+              d: e.d,
+              fill: "none",
+              stroke: "#fff",
+              "stroke-width": "14",
+              pathLength: "1",
+              "stroke-dasharray": "1 1",
+            });
+            let drawn = grow;
+            if (e.red) {
+              path.setAttribute("stroke-dasharray", "10 8");
+              const mask = el("mask", {
+                id: "s7-mask-" + e.id,
+                maskUnits: "userSpaceOnUse",
+                x: "0",
+                y: "0",
+                width: "1920",
+                height: "1080",
+              });
+              mask.appendChild(grow);
+              defs.appendChild(mask);
+              path.setAttribute("mask", "url(#s7-mask-" + e.id + ")");
+            } else {
+              path.setAttribute("pathLength", "1");
+              path.setAttribute("stroke-dasharray", "1 1");
+              drawn = path;
+            }
+            svg.appendChild(path);
+            const head = arrowHead(e.from, e.tip, color);
+            svg.appendChild(head);
+            gsap.set(drawn, { attr: { "stroke-dashoffset": 1 } });
+            gsap.set(head, { opacity: 0 });
+            tl.to(
+              drawn,
+              { attr: { "stroke-dashoffset": 0 }, duration: e.dur, ease: "power2.inOut" },
+              e.t,
+            );
+            tl.to(head, { opacity: 1, duration: 0.12 }, e.t + e.dur - 0.08);
+          });
+
+          gsap.set([".s7-lbl"], { opacity: 0 });
+          tl.fromTo("#s7-l4", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 5.3);
+          tl.fromTo("#s7-l2", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 13.7);
+          tl.fromTo("#s7-l9", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 14.0);
+          window.__timelines["s7-edges"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

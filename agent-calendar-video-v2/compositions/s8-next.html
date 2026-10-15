@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>8 次に作るもの</title>
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          background: var(--bg2);
+        }
+        #s8-head {
+          display: grid;
+          gap: 18px;
+        }
+        #s8-row {
+          position: absolute;
+          left: 120px;
+          right: 120px;
+          top: 330px;
+          display: grid;
+          grid-template-columns: 560px 80px 440px 80px 1fr;
+          align-items: center;
+        }
+        /* 起動用カレンダーの予定 */
+        #s8-ev {
+          padding: 30px 32px;
+          border-left: 10px solid var(--blue);
+        }
+        #s8-ev .cal {
+          font-size: 26px;
+          color: var(--blue-ink);
+          font-weight: 500;
+        }
+        #s8-ev .t {
+          font-size: 36px;
+          font-weight: 500;
+          margin-top: 8px;
+        }
+        #s8-ev .n {
+          margin-top: 18px;
+          padding: 16px 20px;
+          border-radius: 10px;
+          background: var(--bg3);
+          font-size: 32px;
+          line-height: 1.5;
+          min-height: 150px;
+        }
+        .s8-arrow {
+          height: 6px;
+          margin: 0 18px;
+          border-radius: 3px;
+          background: var(--blue);
+          transform-origin: left center;
+          position: relative;
+        }
+        .s8-arrow::after {
+          content: "";
+          position: absolute;
+          right: -6px;
+          top: -9px;
+          border-left: 18px solid var(--blue);
+          border-top: 12px solid transparent;
+          border-bottom: 12px solid transparent;
+        }
+        /* 判定 */
+        #s8-judge {
+          padding: 28px 30px;
+          display: grid;
+          gap: 14px;
+        }
+        #s8-judge .lbl {
+          font-size: 28px;
+          color: var(--ink2);
+        }
+        #s8-judge .chip {
+          justify-self: start;
+          font-size: 30px;
+        }
+        /* 手元の Mac のターミナル（模式図） */
+        #s8-term {
+          border-radius: 16px;
+          background: #202124;
+          color: #e8eaed;
+          box-shadow: var(--shadow-3);
+          overflow: hidden;
+        }
+        #s8-term .bar {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 14px 18px;
+          background: #3c4043;
+          font-size: 24px;
+          color: #bdc1c6;
+        }
+        #s8-term .bar i {
+          width: 14px;
+          height: 14px;
+          border-radius: 50%;
+        }
+        #s8-term .bar span {
+          margin-left: 12px;
+        }
+        #s8-term .body {
+          padding: 26px 30px;
+          font-size: 32px;
+          line-height: 1.7;
+          min-height: 230px;
+        }
+        #s8-term .p {
+          color: #81c995;
+        }
+        #s8-foot {
+          position: absolute;
+          left: 120px;
+          right: 120px;
+          bottom: 150px;
+          display: flex;
+          align-items: center;
+          gap: 18px;
+          font-size: 34px;
+          color: var(--ink2);
+        }
+      </style>
+
+      <div id="root" data-composition-id="s8-next" data-width="1920" data-height="1080">
+        <div class="stage" id="s8-stage">
+          <div id="s8-head">
+            <div class="eyebrow"><span class="num">7</span>次に作るもの</div>
+            <div class="h1">自然言語で、手元の agent も起こす</div>
+          </div>
+
+          <div id="s8-row">
+            <div id="s8-ev" class="card">
+              <div class="cal">起動用カレンダー</div>
+              <div class="t">毎週月曜 9:00</div>
+              <div class="n" id="s8-notes"></div>
+            </div>
+            <div class="s8-arrow" id="s8-a1"></div>
+            <div id="s8-judge" class="card">
+              <div class="lbl">Gemini が判定</div>
+              <span class="chip blue s8-chip">実行先: local</span>
+              <span class="chip green s8-chip">agent: codex</span>
+              <span class="chip gray s8-chip">作業場所: agent-calendar</span>
+            </div>
+            <div class="s8-arrow" id="s8-a2"></div>
+            <div id="s8-term">
+              <div class="bar">
+                <i style="background: #ea4335"></i><i style="background: #fbbc04"></i><i style="background: #34a853"></i><span>自分の Mac</span>
+              </div>
+              <div class="body">
+                <div class="s8-line"><span class="p">$</span> codex</div>
+                <div class="s8-line">依存の更新を確かめて</div>
+                <div class="s8-line" style="color: #8ab4f8">新しいセッションで起動</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="s8-foot">
+            <span class="chip gray">codex</span><span class="chip gray">claude</span>
+            agent を差し替えても、カレンダーの書き方は変わらない
+          </div>
+        </div>
+      </div>
+
+      <script>
+        (function () {
+          const D = 7;
+          const tl = gsap.timeline({ paused: true });
+          const notes = document.querySelector("#s8-notes");
+          const text = "codex で agent-calendar の依存の更新を確かめて。local で";
+          notes.textContent = "";
+          const chars = [...text].map((c) => {
+            const s = document.createElement("span");
+            s.textContent = c;
+            notes.appendChild(s);
+            return s;
+          });
+          gsap.set(chars, { opacity: 0 });
+          gsap.set([".s8-chip", ".s8-line", "#s8-foot"], { opacity: 0 });
+
+          window.ACSeam.enter(tl, "#s8-stage");
+          tl.fromTo("#s8-head > *", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, stagger: 0.1, ease: "power4.out" }, 0.15);
+          tl.fromTo("#s8-ev", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power4.out" }, 0.45);
+          chars.forEach((s, i) => tl.set(s, { opacity: 1 }, 0.8 + i * 0.035));
+          // 判定
+          tl.fromTo("#s8-a1", { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "power3.out" }, 2.75);
+          tl.fromTo("#s8-judge", { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "power4.out" }, 2.95);
+          tl.fromTo(".s8-chip", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, stagger: 0.14, ease: "back.out(1.6)" }, 3.15);
+          // 間のあと、手元の Mac で起動
+          tl.fromTo("#s8-a2", { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "power3.out" }, 4.05);
+          tl.fromTo("#s8-term", { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "power4.out" }, 4.25);
+          tl.fromTo(".s8-line", { opacity: 0 }, { opacity: 1, duration: 0.01, stagger: 0.3 }, 4.55);
+          tl.fromTo("#s8-foot", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power4.out" }, 5.3);
+
+          // 締めへは inverse zoom-through（奥へ退く）
+          tl.to("#s8-stage", { scale: 0.8, duration: 0.22, ease: "power3.in" }, D - 0.22);
+          tl.to("#s8-stage", { opacity: 0, duration: 0.2, ease: "none" }, D - 0.2);
+          window.__timelines["s8-next"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

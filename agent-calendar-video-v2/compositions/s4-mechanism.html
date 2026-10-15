@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>4 仕組み</title>
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          background: var(--bg2);
+        }
+        #s4-h1 {
+          margin-top: 18px;
+        }
+        /* パイプラインの線と点 */
+        #s4-track {
+          position: absolute;
+          left: 240px;
+          top: 336px;
+          width: 1440px;
+          height: 6px;
+          border-radius: 3px;
+          background: var(--line);
+        }
+        #s4-fill {
+          width: 100%;
+          height: 100%;
+          border-radius: 3px;
+          background: var(--blue);
+          transform-origin: left center;
+        }
+        #s4-dot {
+          position: absolute;
+          left: 226px;
+          top: 325px;
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: var(--blue-ink);
+          box-shadow:
+            0 0 0 8px rgba(66, 133, 244, 0.25),
+            0 0 24px 8px rgba(66, 133, 244, 0.35);
+          z-index: 3;
+        }
+        .s4-node {
+          position: absolute;
+          top: 284px;
+          width: 220px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 14px;
+          z-index: 2;
+        }
+        .s4-node .c {
+          width: 104px;
+          height: 104px;
+          border-radius: 50%;
+          background: #fff;
+          border: 4px solid var(--line);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: var(--shadow-1);
+        }
+        .s4-node .c img,
+        .s4-node .c svg {
+          width: 52px;
+          height: 52px;
+        }
+        .s4-node .l {
+          font-size: 27px;
+          font-weight: 500;
+          color: var(--ink3);
+          white-space: nowrap;
+        }
+        /* 段ごとの説明パネル */
+        .s4-panel {
+          position: absolute;
+          left: 120px;
+          top: 486px;
+          width: 1680px;
+          height: 410px;
+          display: grid;
+          grid-template-columns: 560px 1fr;
+          gap: 48px;
+          padding: 44px 52px;
+        }
+        .s4-text .step {
+          font-size: 24px;
+          font-weight: 500;
+          color: var(--blue-ink);
+          letter-spacing: 0.05em;
+        }
+        .s4-text .t {
+          margin-top: 10px;
+          font-size: 50px;
+          font-weight: 600;
+          line-height: 1.25;
+        }
+        .s4-text .d {
+          margin-top: 18px;
+          font-size: 30px;
+          line-height: 1.6;
+          color: var(--ink2);
+        }
+        .s4-vis {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          gap: 22px;
+        }
+        .s4-ev {
+          display: flex;
+          align-items: center;
+          gap: 22px;
+          padding: 20px 26px;
+          border-radius: 14px;
+          color: #fff;
+          font-size: 30px;
+          font-weight: 500;
+        }
+        .s4-ev small {
+          display: block;
+          font-size: 22px;
+          font-weight: 400;
+          opacity: 0.92;
+        }
+        .s4-ev .tag {
+          margin-left: auto;
+          font-size: 22px;
+          padding: 6px 16px;
+          border-radius: 999px;
+          background: rgba(255, 255, 255, 0.22);
+          white-space: nowrap;
+        }
+        .s4-ev.blue {
+          background: var(--blue-ink);
+        }
+        .s4-ev.green {
+          background: var(--green);
+        }
+        /* 取得 */
+        #s4-clockrow {
+          display: flex;
+          align-items: center;
+          gap: 48px;
+        }
+        #s4-clock {
+          width: 230px;
+          height: 230px;
+          flex: none;
+        }
+        #s4-hand {
+          transform-origin: 115px 115px;
+        }
+        .s4-log {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          font-size: 28px;
+        }
+        .s4-log div {
+          display: flex;
+          align-items: center;
+          gap: 18px;
+          padding: 12px 22px;
+          border-radius: 12px;
+          background: var(--bg2);
+        }
+        .s4-log b {
+          font-weight: 500;
+          color: var(--blue-ink);
+          width: 80px;
+        }
+        /* 判定 */
+        .s4-judge {
+          display: grid;
+          grid-template-columns: 540px 60px 1fr;
+          align-items: center;
+          gap: 10px;
+        }
+        .s4-judge .s4-ev {
+          font-size: 27px;
+        }
+        .s4-judge .arrow {
+          font-size: 40px;
+          color: var(--ink3);
+          text-align: center;
+        }
+        .s4-judge .out {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+          align-items: center;
+          font-size: 28px;
+          font-weight: 500;
+        }
+        .s4-calc {
+          position: relative;
+          height: 44px;
+          width: 100%;
+        }
+        .s4-calc span {
+          position: absolute;
+          left: 0;
+          top: 0;
+          white-space: nowrap;
+        }
+        /* 発火 */
+        #s4-fire {
+          display: flex;
+          align-items: center;
+          gap: 56px;
+        }
+        #s4-bolt {
+          position: relative;
+          width: 220px;
+          height: 220px;
+          flex: none;
+        }
+        #s4-bolt .core {
+          position: absolute;
+          inset: 40px;
+          border-radius: 50%;
+          background: var(--yellow);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        #s4-bolt .core svg {
+          width: 76px;
+          height: 76px;
+        }
+        #s4-bolt .ring {
+          position: absolute;
+          inset: 40px;
+          border-radius: 50%;
+          border: 6px solid var(--yellow);
+        }
+        .s4-fireinfo {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          font-size: 32px;
+          font-weight: 500;
+        }
+        /* agent */
+        .s4-agenthead {
+          display: flex;
+          align-items: center;
+          gap: 18px;
+          font-size: 32px;
+          font-weight: 500;
+        }
+        .s4-agenthead .vx {
+          display: block;
+          background: url("assets/icons/vertexai.svg") center / contain no-repeat;
+          width: 56px;
+          height: 56px;
+        }
+        .s4-steps {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+        .s4-steps div {
+          display: flex;
+          align-items: center;
+          gap: 18px;
+          font-size: 29px;
+          padding: 12px 22px;
+          border-radius: 12px;
+          background: var(--bg2);
+        }
+        .s4-steps i {
+          width: 34px;
+          height: 34px;
+          border-radius: 50%;
+          background: var(--blue-ink);
+          color: #fff;
+          font-style: normal;
+          font-size: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex: none;
+        }
+        .s4-steps small {
+          margin-left: auto;
+          font-size: 22px;
+          color: var(--ink2);
+        }
+        /* 承認待ち */
+        #s4-approval {
+          position: relative;
+          padding: 28px 32px;
+          border-radius: 16px;
+          border: 2px solid var(--yellow);
+          background: var(--yellow-tint);
+        }
+        #s4-approval .k {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          font-size: 28px;
+          font-weight: 500;
+        }
+        #s4-approval .n {
+          margin-top: 10px;
+          font-size: 34px;
+          font-weight: 600;
+        }
+        #s4-approval .x {
+          margin-top: 8px;
+          font-size: 24px;
+          color: var(--ink2);
+        }
+        #s4-approval .btns {
+          display: flex;
+          gap: 16px;
+          margin-top: 20px;
+        }
+        .s4-btn {
+          padding: 12px 28px;
+          border-radius: 999px;
+          font-size: 26px;
+          font-weight: 500;
+          border: 2px solid var(--line);
+          background: #fff;
+        }
+        .s4-btn.primary {
+          background: var(--green-ink);
+          border-color: var(--green-ink);
+          color: #fff;
+        }
+        #s4-status {
+          position: absolute;
+          right: 28px;
+          top: 26px;
+        }
+        #s4-status .chip {
+          position: absolute;
+          right: 0;
+          top: 0;
+        }
+        .s4-text6 {
+          position: absolute;
+          left: 52px;
+          top: 44px;
+          width: 560px;
+        }
+        /* 承認してカレンダーへ戻る予定 */
+        #s4-fly {
+          position: absolute;
+          left: 1112px;
+          top: 760px;
+          width: 340px;
+          padding: 14px 20px;
+          border-radius: 12px;
+          background: var(--green);
+          color: #fff;
+          font-size: 26px;
+          font-weight: 500;
+          z-index: 4;
+          box-shadow: var(--shadow-2);
+        }
+        #s4-fly small {
+          display: block;
+          font-size: 20px;
+          font-weight: 400;
+        }
+        #s4-cursor {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 64px;
+          height: 64px;
+          z-index: 6;
+        }
+        #s4-ripple {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 90px;
+          height: 90px;
+          border-radius: 50%;
+          border: 5px solid var(--blue);
+          z-index: 5;
+        }
+        #s4-session {
+          position: absolute;
+          left: 120px;
+          right: 120px;
+          top: 930px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 18px;
+          font-size: 32px;
+          color: var(--ink);
+        }
+      </style>
+
+      <div id="root" data-composition-id="s4-mechanism" data-width="1920" data-height="1080">
+        <div class="stage" id="s4-stage">
+          <div class="eyebrow" id="s4-eyebrow"><span class="num">3</span>仕組み</div>
+          <div class="h1" id="s4-h1">予定が agent を起こすまで</div>
+          <div id="s4-track"><div id="s4-fill"></div></div>
+          <div id="s4-dot"></div>
+          <div class="s4-node" style="left: 130px"><div class="c"><img src="assets/icons/google_calendar.svg" alt=""></div><div class="l">予定</div>
+          </div>
+          <div class="s4-node" style="left: 370px"><div class="c"><img src="assets/icons/cloud_scheduler.svg" alt=""></div><div class="l">1 分ごとの取得</div>
+          </div>
+          <div class="s4-node" style="left: 610px"><div class="c"><svg viewBox="0 0 24 24"><path d="M5 4h4v4H5zM15 4h4v4h-4zM10 16h4v4h-4zM7 8v3h10V8M12 11v5" fill="none" stroke="#4285f4" stroke-width="2" /></svg>
+            </div><div class="l">判定</div>
+          </div>
+          <div class="s4-node" style="left: 850px"><div class="c"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z" fill="#fbbc04" /></svg>
+            </div><div class="l">発火</div>
+          </div>
+          <div class="s4-node" style="left: 1090px"><div class="c"><img src="assets/icons/vertexai.svg" alt=""></div><div class="l">agent</div>
+          </div>
+          <div class="s4-node" style="left: 1330px"><div class="c"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="#fbbc04" stroke-width="2.4" /><path d="M12 7v5l3 2" fill="none" stroke="#b06000" stroke-width="2.4" stroke-linecap="round" /></svg>
+            </div><div class="l">承認待ち</div>
+          </div>
+          <div class="s4-node" style="left: 1570px"><div class="c"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="#34a853" stroke-width="2.2" /><path d="M3 9h18M8 3v4M16 3v4" stroke="#34a853" stroke-width="2.2" /><path d="m8 15 3 3 5-6" fill="none" stroke="#188038" stroke-width="2.4" /></svg>
+            </div><div class="l">カレンダーへ</div>
+          </div>
+          <!-- 1 予定 -->
+          <div class="s4-panel card" id="s4-p1"><div class="s4-text"><div class="step">1 / 7</div><div class="t">予定</div><div class="d">起動の元になるのは、起動用カレンダーと記録用カレンダーの予定だけ</div>
+            </div><div class="s4-vis"><div class="s4-ev blue"><div> 毎朝 9:00 今週の締切を確認して<small>notes に頼みたい仕事を自然言語で書く</small>
+                </div><span class="tag">起動用</span>
+              </div><div class="s4-ev green"><div>パスポート更新 締切<small>notes: 準備: 30日前</small></div><span class="tag">記録用</span>
+              </div>
+            </div>
+          </div>
+          <!-- 2 取得 -->
+          <div class="s4-panel card" id="s4-p2"><div class="s4-text"><div class="step">2 / 7</div><div class="t">1 分ごとの取得</div><div class="d"> Cloud Scheduler が 1 分ごとに差分（syncToken）を取る。LLM は呼ばない
+              </div>
+            </div><div class="s4-vis">
+              <div id="s4-clockrow"><svg id="s4-clock" viewBox="0 0 230 230"><circle cx="115" cy="115" r="106" fill="#fff" stroke="#dadce0" stroke-width="6" /><circle cx="115" cy="115" r="106" fill="none" stroke="#4285f4" stroke-width="6" stroke-dasharray="666" stroke-dashoffset="666" id="s4-arc" transform="rotate(-90 115 115)" /><g id="s4-hand"><line x1="115" y1="115" x2="115" y2="30" stroke="#202124" stroke-width="7" stroke-linecap="round" /></g><circle cx="115" cy="115" r="10" fill="#202124" /></svg><div class="s4-log"><div><b>8:58</b>取得 — 差分 1 件</div><div><b>8:59</b>取得 — 差分 0 件</div><div><b>9:00</b>取得 — 差分 0 件</div>
+                </div>
+              </div><div><span class="chip green">変化のない回は LLM を呼ばないので安い</span></div>
+            </div>
+          </div>
+          <!-- 3 判定 -->
+          <div class="s4-panel card" id="s4-p3"><div class="s4-text"><div class="step">3 / 7</div><div class="t">判定</div><div class="d"> 発火する時刻を計算する。起動用の予定は、足された・変わったときに Gemini が実行先と内容を判定する
+              </div>
+            </div><div class="s4-vis"><div class="s4-judge" id="s4-j1"><div class="s4-ev blue"><div>毎朝 9:00 今週の締切を確認して</div></div><div class="arrow">→</div><div class="out"><span class="chip blue">cloud</span><span class="chip blue">gemini</span><span>開始時刻に発火</span>
+                </div>
+              </div><div class="s4-judge" id="s4-j2"><div class="s4-ev green"><div>パスポート更新 11月14日<small>準備: 30日前</small></div>
+                </div><div class="arrow">→</div><div class="out"><div class="s4-calc"><span id="s4-calc-a">11月14日 − 30日</span><span id="s4-calc-b" style="color: var(--green-ink)">10月15日に発火</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 4 発火 -->
+          <div class="s4-panel card" id="s4-p4"><div class="s4-text"><div class="step">4 / 7</div><div class="t">発火</div><div class="d"> 時刻が来た回を起こす。Firestore に予約してから動くので、同じ回は一度だけ
+              </div>
+            </div><div class="s4-vis">
+              <div id="s4-fire">
+                <div id="s4-bolt"><div class="ring"></div><div class="core"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z" fill="#fff" /></svg>
+                  </div>
+                </div><div class="s4-fireinfo"><div>10月15日 — パスポート更新の準備</div><div><span class="chip yellow" id="s4-once">同じ回は一度だけ</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 5 agent -->
+          <div class="s4-panel card" id="s4-p5"><div class="s4-text"><div class="step">5 / 7</div><div class="t">agent</div><div class="d"> Vertex AI の Gemini が締切を読み、段取りを考える。tool は読み取りと提案だけ
+              </div>
+            </div><div class="s4-vis"><div class="s4-agenthead"><span class="vx"></span>Gemini 2.5 Flash
+              </div><div class="s4-steps"><div><i>1</i>締切と自分の予定を読む<small>tool: 読み取り</small></div><div><i>2</i>何をいつまでに準備するか考える</div><div><i>3</i>準備の予定を提案する<small>tool: 提案</small></div>
+              </div>
+            </div>
+          </div>
+          <!-- 6・7 承認待ち → カレンダーへ -->
+          <div class="s4-panel card" id="s4-p6"><div class="s4-text" id="s4-t6a"><div class="step">6 / 7</div><div class="t">承認待ち</div><div class="d"> agent はカレンダーに直接書けない。予定の追加は提案として承認待ちに入る
+              </div>
+            </div><div class="s4-text s4-text6" id="s4-t6b"><div class="step">7 / 7</div><div class="t">カレンダーへ</div><div class="d">人が承認したときだけ、記録用カレンダーに書かれる</div>
+            </div><div class="s4-vis">
+              <div id="s4-approval">
+                <div id="s4-status"><span class="chip yellow" id="s4-st-wait">承認待ち</span><span class="chip green" id="s4-st-ok">承認済み</span>
+                </div><div class="k">記録用カレンダーに予定を追加</div><div class="n">パスポート写真の準備（10月17日）</div><div class="x">写真店か証明写真機で、パスポート用の写真を撮る</div><div class="btns"><span class="s4-btn primary" id="s4-approve">承認して追加</span><span class="s4-btn">却下</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="s4-fly">パスポート写真の準備<small>記録用カレンダー · 10月17日</small></div>
+          <div id="s4-ripple"></div>
+          <svg id="s4-cursor" viewBox="0 0 32 32"><path d="M6 3v23l6-6 4 9 4-2-4-9h8z" fill="#202124" stroke="#fff" stroke-width="2" stroke-linejoin="round" /></svg>
+          <div id="s4-session"><span class="chip blue">セッション</span>すべての回はセッションとして残り、dashboard で入力・tool・出力を確かめられる
+          </div>
+        </div>
+      </div>
+
+      <script>
+        (function () {
+          const D = 28;
+          const tl = gsap.timeline({ paused: true });
+          const nodes = [...document.querySelectorAll(".s4-node")];
+          const panels = ["#s4-p1", "#s4-p2", "#s4-p3", "#s4-p4", "#s4-p5", "#s4-p6"];
+          const NODE_X = [240, 480, 720, 960, 1200, 1440, 1680];
+
+          // 初期状態
+          gsap.set(panels, { opacity: 0 });
+ gsap.set(["#s4-fly", "#s4-cursor", "#s4-ripple", "#s4-session", "#s4-t6b", "#s4-st-ok", "#s4-calc-b"], { opacity: 0 });
+          gsap.set(".s4-log div, .s4-steps div, .s4-judge", { opacity: 0 });
+          gsap.set("#s4-fill", { scaleX: 0 });
+          gsap.set("#s4-dot", { opacity: 0 });
+          gsap.set("#s4-bolt .core", { scale: 0.7, opacity: 0.4 });
+          gsap.set("#s4-bolt .ring", { opacity: 0 });
+
+          window.ACSeam.enter(tl, "#s4-stage");
+
+          // 見出しと線
+ tl.fromTo("#s4-eyebrow", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power4.out" }, 0.1);
+ tl.fromTo("#s4-h1", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power4.out" }, 0.18);
+ tl.fromTo(nodes, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, stagger: 0.06, ease: "power4.out" }, 0.3);
+          tl.fromTo("#s4-track", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0.3);
+
+          // 段の点灯
+          function light(i, t) {
+            const n = nodes[i];
+ tl.to(n.querySelector(".c"), { borderColor: "#4285f4", backgroundColor: "#e8f0fe", duration: 0.25 }, t);
+ tl.fromTo(n.querySelector(".c"), { scale: 1 }, { immediateRender: false, scale: 1.12, duration: 0.14, ease: "power2.out", yoyo: true, repeat: 1 }, t);
+            tl.to(n.querySelector(".l"), { color: "#202124", duration: 0.25 }, t);
+          }
+          // 点を次の段へ運ぶ（到着が点灯の時刻）
+          function travel(i, arrive) {
+            const dur = 0.6;
+ tl.to("#s4-dot", { x: NODE_X[i] - NODE_X[0], duration: dur, ease: "power2.inOut" }, arrive - dur);
+            tl.to("#s4-fill", { scaleX: i / 6, duration: dur, ease: "power2.inOut" }, arrive - dur);
+          }
+          // パネルの入れ替え（左向きの流れ）
+          function swap(from, to, t) {
+            if (from) {
+              tl.to(from, { x: -140, duration: 0.3, ease: "power4.in" }, t - 0.3);
+              tl.to(from, { opacity: 0, duration: 0.2, ease: "none" }, t - 0.24);
+            }
+ tl.fromTo(to, { x: 140, opacity: 0.35 }, { immediateRender: false, x: 0, opacity: 1, duration: 0.45, ease: "power4.out" }, t);
+          }
+
+          // 1 予定（1.0s）
+          tl.set("#s4-dot", { opacity: 1 }, 0.9);
+ tl.fromTo("#s4-dot", { scale: 0 }, { immediateRender: false, scale: 1, duration: 0.3, ease: "back.out(1.7)" }, 0.9);
+          light(0, 1.0);
+          swap(null, "#s4-p1", 1.0);
+ tl.fromTo("#s4-p1 .s4-ev", { x: 60, opacity: 0 }, { immediateRender: false, x: 0, opacity: 1, duration: 0.4, stagger: 0.15, ease: "power4.out" }, 1.3);
+
+          // 2 取得（3.5s）: 時計が 2 周し、1 分ごとの取得が記録される
+          travel(1, 3.5);
+          light(1, 3.5);
+          swap("#s4-p1", "#s4-p2", 3.5);
+ tl.fromTo("#s4-hand", { rotation: 0 }, { immediateRender: false, rotation: 1080, duration: 3.0, ease: "none" }, 3.8);
+ tl.fromTo("#s4-arc", { strokeDashoffset: 666 }, { immediateRender: false, strokeDashoffset: 0, duration: 3.0, ease: "none" }, 3.8);
+ tl.fromTo(".s4-log div", { x: 40, opacity: 0 }, { immediateRender: false, x: 0, opacity: 1, duration: 0.3, stagger: 1.0, ease: "power4.out" }, 4.0);
+
+          // 3 判定（7.0s）
+          travel(2, 7.0);
+          light(2, 7.0);
+          swap("#s4-p2", "#s4-p3", 7.0);
+ tl.fromTo("#s4-j1", { x: 60, opacity: 0 }, { immediateRender: false, x: 0, opacity: 1, duration: 0.4, ease: "power4.out" }, 7.4);
+ tl.fromTo("#s4-j1 .chip", { scale: 0.6, opacity: 0 }, { immediateRender: false, scale: 1, opacity: 1, duration: 0.3, stagger: 0.12, ease: "back.out(1.7)" }, 8.0);
+ tl.fromTo("#s4-j2", { x: 60, opacity: 0 }, { immediateRender: false, x: 0, opacity: 1, duration: 0.4, ease: "power4.out" }, 8.6);
+          tl.to("#s4-calc-a", { y: -30, opacity: 0, duration: 0.3, ease: "power3.in" }, 9.7);
+ tl.fromTo("#s4-calc-b", { y: 30, opacity: 0 }, { immediateRender: false, y: 0, opacity: 1, duration: 0.35, ease: "power4.out" }, 9.95);
+
+          // 4 発火（点の到着 10.4s → 0.6s の間 → 11.0s に発火）
+          travel(3, 10.4);
+          swap("#s4-p3", "#s4-p4", 10.4);
+          light(3, 11.0);
+ tl.to("#s4-bolt .core", { scale: 1, opacity: 1, duration: 0.35, ease: "back.out(1.7)" }, 11.0);
+ tl.fromTo("#s4-bolt .ring", { scale: 1, opacity: 1 }, { immediateRender: false, scale: 1.9, opacity: 0, duration: 0.8, ease: "power2.out" }, 11.0);
+ tl.fromTo("#s4-dot", { scale: 1 }, { immediateRender: false, scale: 1.8, duration: 0.2, ease: "power2.out", yoyo: true, repeat: 1 }, 11.0);
+ tl.fromTo("#s4-once", { scale: 0.6, opacity: 0 }, { immediateRender: false, scale: 1, opacity: 1, duration: 0.35, ease: "back.out(1.7)" }, 11.6);
+
+          // 5 agent（14.0s）
+          travel(4, 14.0);
+          light(4, 14.0);
+          swap("#s4-p4", "#s4-p5", 14.0);
+ tl.fromTo(".s4-steps div", { x: 50, opacity: 0 }, { immediateRender: false, x: 0, opacity: 1, duration: 0.35, stagger: 0.9, ease: "power4.out" }, 14.6);
+
+          // 6 承認待ち（18.0s）
+          travel(5, 18.0);
+          light(5, 18.0);
+          swap("#s4-p5", "#s4-p6", 18.0);
+          tl.fromTo("#s4-approval", { y: 40 }, { immediateRender: false, y: 0, duration: 0.5, ease: "power4.out" }, 18.2);
+
+          // 7 カレンダーへ（21.5s）: 説明が入れ替わり、カーソルが「承認して追加」を押す
+          tl.to("#s4-t6a", { x: -100, opacity: 0, duration: 0.3, ease: "power4.in" }, 21.2);
+ tl.fromTo("#s4-t6b", { x: 100, opacity: 0.35 }, { immediateRender: false, x: 0, opacity: 1, duration: 0.45, ease: "power4.out" }, 21.5);
+          // 承認ボタンの中心（絶対座標）≈ (1173, 803)
+          tl.set("#s4-cursor", { opacity: 1 }, 21.4);
+ tl.fromTo("#s4-cursor", { x: 1500, y: 1120 }, { immediateRender: false, x: 1168, y: 796, duration: 0.8, ease: "power3.out" }, 21.4);
+ tl.to("#s4-cursor", { scale: 0.85, duration: 0.08, ease: "power2.in", transformOrigin: "10% 10%" }, 22.5);
+          tl.to("#s4-cursor", { scale: 1, duration: 0.14, ease: "power2.out" }, 22.58);
+          tl.to("#s4-approve", { scale: 0.92, duration: 0.08, yoyo: true, repeat: 1 }, 22.5);
+          tl.set("#s4-ripple", { opacity: 1 }, 22.5);
+ tl.fromTo("#s4-ripple", { x: 1123, y: 751, scale: 0.3 }, { immediateRender: false, scale: 1.6, opacity: 0, duration: 0.6, ease: "power2.out" }, 22.5);
+          tl.to("#s4-st-wait", { opacity: 0, duration: 0.2 }, 22.55);
+          tl.to("#s4-st-ok", { opacity: 1, duration: 0.25 }, 22.6);
+ tl.to("#s4-approval", { borderColor: "#34a853", backgroundColor: "#e6f4ea", duration: 0.3 }, 22.55);
+          tl.to("#s4-cursor", { x: 1600, y: 1160, duration: 0.5, ease: "power3.in" }, 23.3);
+          // 承認された予定が、カレンダー（最初の段）へ飛んで戻る
+          travel(6, 23.1);
+          light(6, 23.1);
+          tl.set("#s4-fly", { opacity: 1 }, 22.65);
+ tl.fromTo("#s4-fly", { x: 0, y: 0, scale: 0.9 }, { immediateRender: false, x: 0, y: -40, scale: 1, duration: 0.3, ease: "power2.out" }, 22.65);
+ tl.to("#s4-fly", { x: -1112 + 240 - 170, y: -760 + 338 - 40, scale: 0.42, duration: 0.9, ease: "power3.inOut", }, 23.2);
+          tl.to("#s4-fly", { opacity: 0, duration: 0.15 }, 24.05);
+ tl.fromTo(nodes[0].querySelector(".c"), { scale: 1 }, { immediateRender: false, scale: 1.22, borderColor: "#34a853", backgroundColor: "#e6f4ea", duration: 0.16, ease: "power2.out", yoyo: true, repeat: 1, }, 24.1);
+
+          // セッション（25.0s）
+ tl.fromTo("#s4-session", { y: 30, opacity: 0 }, { immediateRender: false, y: 0, opacity: 1, duration: 0.45, ease: "power4.out" }, 25.0);
+
+          window.ACSeam.exit(tl, "#s4-stage", D);
+          window.__timelines["s4-mechanism"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

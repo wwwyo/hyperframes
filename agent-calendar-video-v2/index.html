@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>Agent Calendar デモ v2</title>
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Google Sans";
+        src: url("assets/fonts/GoogleSans-subset.ttf") format("truetype");
+        font-weight: 100 900;
+      }
+      @font-face {
+        font-family: "Noto Sans JP";
+        src: url("assets/fonts/NotoSansJP-subset.ttf") format("truetype");
+        font-weight: 100 900;
+      }
+      :root {
+        --bg: #ffffff;
+        --bg2: #f8f9fa;
+        --bg3: #f1f3f4;
+        --ink: #202124;
+        --ink2: #5f6368;
+        --ink3: #80868b;
+        --line: #dadce0;
+        --blue: #4285f4;
+        --blue-ink: #1a73e8;
+        --blue-tint: #e8f0fe;
+        --green: #34a853;
+        --green-ink: #188038;
+        --green-tint: #e6f4ea;
+        --yellow: #fbbc04;
+        --yellow-ink: #965200;
+        --yellow-tint: #fef7e0;
+        --red: #ea4335;
+        --red-ink: #c5221f;
+        --red-tint: #fce8e6;
+        --shadow-1: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+        --shadow-2: 0 1px 3px rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
+        --shadow-3: 0 4px 4px rgba(60, 64, 67, 0.3), 0 8px 12px 6px rgba(60, 64, 67, 0.15);
+        --font: "Google Sans", "Noto Sans JP", sans-serif;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--bg);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--font);
+        font-feature-settings: "palt";
+        line-break: strict;
+      }
+      /* 全シーン共通の部品 */
+      .stage {
+        position: absolute;
+        inset: 0;
+        padding: 96px 120px 80px;
+      }
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 26px;
+        font-weight: 500;
+        color: var(--ink2);
+        letter-spacing: 0.04em;
+      }
+      .eyebrow .num {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--blue-ink);
+        color: #fff;
+        font-size: 22px;
+      }
+      .h1 {
+        font-size: 68px;
+        font-weight: 600;
+        line-height: 1.25;
+        letter-spacing: -0.005em;
+      }
+      .lead {
+        font-size: 34px;
+        line-height: 1.6;
+        color: var(--ink2);
+      }
+      .card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: var(--shadow-2);
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 20px;
+        border-radius: 999px;
+        font-size: 26px;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+      .chip.blue {
+        background: var(--blue-tint);
+        color: var(--blue-ink);
+      }
+      .chip.green {
+        background: var(--green-tint);
+        color: var(--green-ink);
+      }
+      .chip.yellow {
+        background: var(--yellow-tint);
+        color: var(--yellow-ink);
+      }
+      .chip.red {
+        background: var(--red-tint);
+        color: var(--red-ink);
+      }
+      .chip.gray {
+        background: var(--bg3);
+        color: var(--ink2);
+      }
+      .mono {
+        font-family: "Google Sans", "Noto Sans JP", monospace;
+        letter-spacing: 0.01em;
+      }
+      /* 上端の Google 4 色の帯（全編） */
+      #gbar {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 8px;
+        display: flex;
+        z-index: 50;
+      }
+      #gbar i {
+        flex: 1;
+      }
+      /* 章の目印（右上） */
+      #chapters {
+        position: absolute;
+        top: 34px;
+        right: 48px;
+        display: flex;
+        gap: 10px;
+        z-index: 50;
+      }
+      #chapters .ch {
+        width: 34px;
+        height: 6px;
+        border-radius: 3px;
+        background: var(--line);
+      }
+      #chapters .ch b {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 3px;
+        background: var(--blue);
+        transform-origin: left center;
+      }
+    </style>
+    <script>
+      /* シーンの継ぎ目（cut-the-curve、左向き）。どのシーンも .stage を持ち、
+         入りは右から途中の速度で入り、出は左へ加速しながら抜ける */
+      window.ACSeam = {
+        enter(tl, el) {
+          tl.fromTo(
+            el,
+            { x: 230, opacity: 0.35 },
+            { x: 0, opacity: 1, duration: 0.5, ease: "power4.out" },
+            0,
+          );
+        },
+        exit(tl, el, sceneDuration) {
+          const t = sceneDuration - 0.34;
+          tl.to(el, { x: -230, duration: 0.34, ease: "power4.in" }, t);
+          tl.to(el, { opacity: 0, duration: 0.24, ease: "none" }, t + 0.1);
+        },
+      };
+    </script>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="184.5" data-width="1920" data-height="1080">
+      <div id="s1" data-composition-id="s1-hook" data-composition-src="compositions/s1-hook.html" data-start="0" data-duration="10" data-track-index="1" data-width="1920" data-height="1080"></div>
+      <div id="s2" data-composition-id="s2-problem" data-composition-src="compositions/s2-problem.html" data-start="10" data-duration="28" data-track-index="1" data-width="1920" data-height="1080"></div>
+      <div id="s3" data-composition-id="s3-solution" data-composition-src="compositions/s3-solution.html" data-start="38" data-duration="20" data-track-index="1" data-width="1920" data-height="1080"></div>
+      <div id="s4" data-composition-id="s4-mechanism" data-composition-src="compositions/s4-mechanism.html" data-start="58" data-duration="28" data-track-index="1" data-width="1920" data-height="1080"></div>
+      <div id="s5" data-composition-id="s5-demo" data-composition-src="compositions/s5-demo.html" data-start="86" data-duration="52.5" data-track-index="1" data-width="1920" data-height="1080"></div>
+      <div id="s6" data-composition-id="s6-safety" data-composition-src="compositions/s6-safety.html" data-start="138.5" data-duration="18" data-track-index="1" data-width="1920" data-height="1080"></div>
+      <div id="s7" data-composition-id="s7-architecture" data-composition-src="compositions/s7-architecture.html" data-start="156.5" data-duration="16" data-track-index="1" data-width="1920" data-height="1080"></div>
+      <div id="s8" data-composition-id="s8-next" data-composition-src="compositions/s8-next.html" data-start="172.5" data-duration="7" data-track-index="1" data-width="1920" data-height="1080"></div>
+      <div id="s9" data-composition-id="s9-closing" data-composition-src="compositions/s9-closing.html" data-start="179.5" data-duration="5" data-track-index="1" data-width="1920" data-height="1080"></div>
+
+      <div id="overlay" data-composition-id="overlay" data-composition-src="compositions/overlay.html" data-start="0" data-duration="184.5" data-track-index="5" data-width="1920" data-height="1080"></div>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

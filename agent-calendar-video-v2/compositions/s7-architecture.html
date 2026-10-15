@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>7 アーキテクチャ</title>
+  </head>
+  <body>
+    <template>
+      <style>
+        /* 地は #root ではなく別の div に塗る。親の #root の規則は入れ子の子の #root にも掛かり、
+           子の層が地で塗りつぶされるため */
+        #root {
+          position: absolute;
+          inset: 0;
+        }
+        #s7-bg {
+          position: absolute;
+          inset: 0;
+          background: var(--bg2);
+        }
+        #s7-stage {
+          padding: 0;
+        }
+        #s7-head {
+          position: absolute;
+          left: 120px;
+          top: 40px;
+          display: flex;
+          align-items: baseline;
+          gap: 28px;
+        }
+        #s7-head .h1 {
+          font-size: 50px;
+        }
+        #s7-head .sub {
+          font-size: 26px;
+          color: var(--ink2);
+        }
+      </style>
+
+      <!-- 構成図は 3 層: 図（カード）、線、ハイライトと説明。どれも 0〜16 秒の同じ時計で動く -->
+      <div id="root" data-composition-id="s7-architecture" data-width="1920" data-height="1080">
+        <div id="s7-bg"></div>
+        <div class="stage" id="s7-stage">
+          <div id="s7-head">
+            <div class="h1">Google Cloud の上で動く</div>
+            <div class="sub">Agent Calendar の構成</div>
+          </div>
+          <div id="s7-diagram-host" data-composition-id="s7-diagram" data-composition-src="compositions/s7-diagram.html" data-start="0" data-duration="16" data-track-index="1" data-width="1920" data-height="1080"></div>
+          <div id="s7-edges-host" data-composition-id="s7-edges" data-composition-src="compositions/s7-edges.html" data-start="0" data-duration="16" data-track-index="2" data-width="1920" data-height="1080"></div>
+          <div id="s7-caps-host" data-composition-id="s7-caps" data-composition-src="compositions/s7-caps.html" data-start="0" data-duration="16" data-track-index="3" data-width="1920" data-height="1080"></div>
+        </div>
+      </div>
+
+      <script>
+        (function () {
+          const D = 16;
+          const tl = gsap.timeline({ paused: true });
+          gsap.set("#s7-head", { opacity: 0 });
+          window.ACSeam.enter(tl, "#s7-stage");
+          tl.fromTo(
+            "#s7-head",
+            { y: 40, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.45, ease: "power4.out" },
+            0.15,
+          );
+          window.ACSeam.exit(tl, "#s7-stage", D);
+          window.__timelines["s7-architecture"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

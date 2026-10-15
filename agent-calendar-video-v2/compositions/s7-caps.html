@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>7 アーキテクチャ — ハイライトと説明</title>
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+        }
+        .s7-hl {
+          position: absolute;
+          border: 4px solid var(--blue);
+          border-radius: 20px;
+          box-shadow: 0 0 0 8px rgba(66, 133, 244, 0.16);
+        }
+        .s7-cap {
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 952px;
+          display: flex;
+          justify-content: center;
+        }
+        .s7-cap span {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          padding: 14px 32px;
+          border-radius: 999px;
+          background: #fff;
+          box-shadow: var(--shadow-2);
+          font-size: 30px;
+          font-weight: 500;
+          white-space: nowrap;
+        }
+        .s7-cap b {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: var(--blue);
+          color: #fff;
+          font-size: 22px;
+          font-weight: 600;
+        }
+      </style>
+
+      <div id="root" data-composition-id="s7-caps" data-width="1920" data-height="1080">
+        <div id="s7-h1" class="s7-hl" style="left: 68px; top: 158px; width: 364px; height: 774px"></div>
+        <div id="s7-h2" class="s7-hl" style="left: 518px; top: 218px; width: 1304px; height: 474px"></div>
+        <div id="s7-h3a" class="s7-hl" style="left: 954px; top: 288px; width: 424px; height: 214px"></div>
+        <div id="s7-h3b" class="s7-hl" style="left: 88px; top: 448px; width: 324px; height: 224px"></div>
+        <div id="s7-h4" class="s7-hl" style="left: 518px; top: 728px; width: 404px; height: 184px"></div>
+        <div id="s7-h5" class="s7-hl" style="left: 948px; top: 728px; width: 424px; height: 184px"></div>
+        <div id="s7-h6" class="s7-hl" style="left: 1398px; top: 728px; width: 424px; height: 184px"></div>
+        <div id="s7-h7a" class="s7-hl" style="left: 954px; top: 493px; width: 844px; height: 184px"></div>
+        <div id="s7-h7b" class="s7-hl" style="left: 88px; top: 668px; width: 324px; height: 244px"></div>
+
+        <div class="s7-cap" id="s7-c1">
+          <span><b>1</b>人は Google Calendar に予定を書き、dashboard で承認する</span>
+        </div>
+        <div class="s7-cap" id="s7-c2">
+          <span><b>2</b>Cloud Scheduler が 1 分ごとに Cloud Run の /tick を呼ぶ（OIDC）</span>
+        </div>
+        <div class="s7-cap" id="s7-c3">
+          <span><b>3</b>runner は service account でカレンダーの差分（syncToken）を読む</span>
+        </div>
+        <div class="s7-cap" id="s7-c4">
+          <span><b>4</b>Firestore に予定・発火予定・判定結果・セッション・承認待ちを持つ</span>
+        </div>
+        <div class="s7-cap" id="s7-c5">
+          <span><b>5</b>Vertex AI の Gemini 2.5 Flash を service account で呼ぶ。API key
+            は持たない</span>
+        </div>
+        <div class="s7-cap" id="s7-c6">
+          <span><b>6</b>Cloud Run Job は実行ごとの sandbox。権限を持たず、LLM は proxy 経由</span>
+        </div>
+        <div class="s7-cap" id="s7-c7">
+          <span><b>7</b>ログは Cloud Logging へ。承認したときだけ記録用カレンダーに書く</span>
+        </div>
+      </div>
+
+      <script>
+        (function () {
+          const tl = gsap.timeline({ paused: true });
+          gsap.set([".s7-hl", ".s7-cap"], { opacity: 0 });
+          // 手順ごとに [説明, ハイライト, 出る秒, 消える秒]。最後の手順は消さずに終わる
+          const steps = [
+            ["#s7-c1", ["#s7-h1"], 0.6, 2.4],
+            ["#s7-c2", ["#s7-h2"], 2.6, 4.9],
+            ["#s7-c3", ["#s7-h3a", "#s7-h3b"], 5.1, 6.9],
+            ["#s7-c4", ["#s7-h4"], 7.1, 8.9],
+            ["#s7-c5", ["#s7-h5"], 9.1, 10.9],
+            ["#s7-c6", ["#s7-h6"], 11.1, 12.9],
+            ["#s7-c7", ["#s7-h7a", "#s7-h7b"], 13.1, null],
+          ];
+          steps.forEach(([cap, hl, on, off]) => {
+            tl.fromTo(
+              cap,
+              { y: 24, opacity: 0 },
+              { y: 0, opacity: 1, duration: 0.35, ease: "power4.out" },
+              on,
+            );
+            // ハイライトは、その部分が出てから枠を締める
+            tl.fromTo(
+              hl,
+              { scale: 1.04, opacity: 0 },
+              { scale: 1, opacity: 1, duration: 0.35, ease: "power3.out" },
+              on + (on < 1 ? 0.5 : 0.7),
+            );
+            if (off !== null) {
+              tl.to(cap, { y: -16, opacity: 0, duration: 0.2, ease: "power2.in" }, off);
+              tl.to(hl, { opacity: 0, duration: 0.25 }, off);
+            }
+          });
+          window.__timelines["s7-caps"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

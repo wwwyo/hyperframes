@@ -1,0 +1,126 @@
+{
+  "fps": 30,
+  "seams": [
+    {
+      "id": "s1→s2",
+      "cut": 10,
+      "technique": "cut-the-curve LEFT",
+      "exit": {
+        "selector": "#s1-stage",
+        "axis": "x",
+        "dir": -1
+      },
+      "entry": {
+        "selector": "#s2-stage",
+        "axis": "x",
+        "dir": -1
+      }
+    },
+    {
+      "id": "s2→s3",
+      "cut": 38,
+      "technique": "cut-the-curve LEFT",
+      "exit": {
+        "selector": "#s2-stage",
+        "axis": "x",
+        "dir": -1
+      },
+      "entry": {
+        "selector": "#s3-stage",
+        "axis": "x",
+        "dir": -1
+      }
+    },
+    {
+      "id": "s3→s4",
+      "cut": 58,
+      "technique": "cut-the-curve LEFT",
+      "exit": {
+        "selector": "#s3-stage",
+        "axis": "x",
+        "dir": -1
+      },
+      "entry": {
+        "selector": "#s4-stage",
+        "axis": "x",
+        "dir": -1
+      }
+    },
+    {
+      "id": "s4→s5",
+      "cut": 86,
+      "technique": "cut-the-curve LEFT",
+      "exit": {
+        "selector": "#s4-stage",
+        "axis": "x",
+        "dir": -1
+      },
+      "entry": {
+        "selector": "#s5-stage",
+        "axis": "x",
+        "dir": -1
+      }
+    },
+    {
+      "id": "s5→s6",
+      "cut": 138.5,
+      "technique": "cut-the-curve LEFT",
+      "exit": {
+        "selector": "#s5-stage",
+        "axis": "x",
+        "dir": -1
+      },
+      "entry": {
+        "selector": "#s6-stage",
+        "axis": "x",
+        "dir": -1
+      }
+    },
+    {
+      "id": "s6→s7",
+      "cut": 156.5,
+      "technique": "cut-the-curve LEFT",
+      "exit": {
+        "selector": "#s6-stage",
+        "axis": "x",
+        "dir": -1
+      },
+      "entry": {
+        "selector": "#s7-stage",
+        "axis": "x",
+        "dir": -1
+      }
+    },
+    {
+      "id": "s7→s8",
+      "cut": 172.5,
+      "technique": "cut-the-curve LEFT",
+      "exit": {
+        "selector": "#s7-stage",
+        "axis": "x",
+        "dir": -1
+      },
+      "entry": {
+        "selector": "#s8-stage",
+        "axis": "x",
+        "dir": -1
+      }
+    },
+    {
+      "id": "s8→s9",
+      "cut": 179.5,
+      "technique": "inverse zoom-through",
+      "exit": {
+        "selector": "#s8-stage",
+        "axis": "z",
+        "dir": -1
+      },
+      "entry": {
+        "selector": "#s9-stage",
+        "axis": "z",
+        "dir": -1,
+        "scanRoot": "#s9-stage"
+      }
+    }
+  ]
+}

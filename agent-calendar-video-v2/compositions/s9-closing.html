@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>9 締め</title>
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          background: var(--bg);
+        }
+        #s9-stage {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 30px;
+        }
+        #s9-dots {
+          display: flex;
+          gap: 16px;
+        }
+        #s9-dots i {
+          width: 26px;
+          height: 26px;
+          border-radius: 50%;
+        }
+        #s9-name {
+          font-size: 150px;
+          font-weight: 600;
+          letter-spacing: -0.02em;
+        }
+        #s9-line {
+          font-size: 48px;
+          color: var(--ink);
+        }
+        #s9-links {
+          margin-top: 40px;
+          display: grid;
+          gap: 14px;
+          justify-items: center;
+          font-size: 28px;
+          color: var(--ink2);
+        }
+        #s9-links b {
+          font-weight: 500;
+          color: var(--blue-ink);
+        }
+      </style>
+
+      <div id="root" data-composition-id="s9-closing" data-width="1920" data-height="1080">
+        <div class="stage" id="s9-stage">
+          <div id="s9-dots">
+            <i style="background: #4285f4"></i><i style="background: #ea4335"></i><i style="background: #fbbc04"></i><i style="background: #34a853"></i>
+          </div>
+          <div id="s9-name">Agent Calendar</div>
+          <div id="s9-line">いつもの Google Calendar で、agent を動かす</div>
+          <div id="s9-links">
+            <div>試す <b>agent-calendar-785713600547.asia-northeast1.run.app</b></div>
+            <div>コード <b>github.com/wwwyo/agent-calendar</b></div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        (function () {
+          const tl = gsap.timeline({ paused: true });
+          gsap.set("#s9-links", { opacity: 0 });
+          // 前のシーンが奥へ退いた流れを受けて、大きめから縮んで着地する（inverse zoom-through）
+          tl.fromTo("#s9-stage", { scale: 1.25, opacity: 0.15 }, { scale: 1, opacity: 1, duration: 0.6, ease: "expo.out" }, 0);
+          tl.fromTo("#s9-links", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power4.out" }, 1.1);
+          window.__timelines["s9-closing"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>
