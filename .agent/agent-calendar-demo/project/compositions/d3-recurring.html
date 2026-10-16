@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>デモ③ 定期の仕事</title>
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+        }
+        #d3-recurring-view {
+          position: relative;
+          margin-top: 28px;
+          height: 700px;
+          overflow: hidden;
+          border: 1px solid var(--border-strong);
+          border-radius: 12px;
+        }
+        #d3-recurring-img {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 2200px;
+          display: block;
+        }
+        #d3-recurring .h {
+          font-size: 52px;
+        }
+      </style>
+      <div
+        id="root"
+        data-composition-id="d3-recurring"
+        data-width="1920"
+        data-height="1080"
+        data-duration="12"
+      >
+        <div class="scene">
+          <div class="stage" id="d3-recurring-stage">
+            <span class="eyebrow"><b>04 / デモ③ 定期の仕事</b></span>
+            <h2 class="h" id="d3-recurring-title" style="margin-top: 12px; font-size: 52px">
+              定期の仕事が、その時刻に発火する
+            </h2>
+            <div id="d3-recurring-view">
+              <img id="d3-recurring-img" src="assets/dashboard.png" alt="dashboard" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <script>
+        const tl = gsap.timeline({ paused: true });
+        const ease = "power4.out";
+        const enter = (sel, t) =>
+          tl.fromTo(sel, { x: 160, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease }, t);
+        const exit = (sel, end) =>
+          tl.to(sel, { x: -160, opacity: 0, duration: 0.45, ease: "power4.in" }, end - 0.45);
+        const reveal = (sel, t, y = 24) =>
+          tl.fromTo(
+            sel,
+            { y, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.6, ease, stagger: 0.12 },
+            t,
+          );
+
+        enter("#d3-recurring-stage", 0);
+        tl.fromTo(
+          "#d3-recurring-img",
+          { x: -150, y: -420 },
+          { x: -150, y: -560, duration: 12, ease: "sine.inOut" },
+          0,
+        );
+        exit("#d3-recurring-stage", 12);
+        window.__timelines["d3-recurring"] = tl;
+      </script>
+    </template>
+  </body>
+</html>

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>安全性</title>
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+        }
+        #s6-safety-list {
+          margin: 48px 0 0;
+          padding: 0;
+          list-style: none;
+          display: grid;
+          gap: 28px;
+        }
+        #s6-safety-list li {
+          padding: 24px 32px;
+          border: 1px solid var(--border);
+          border-left: 4px solid var(--primary);
+          border-radius: 8px;
+          background: var(--secondary);
+          font-size: 38px;
+          line-height: 1.5;
+        }
+      </style>
+      <div
+        id="root"
+        data-composition-id="s6-safety"
+        data-width="1920"
+        data-height="1080"
+        data-duration="18"
+      >
+        <div class="scene">
+          <div class="stage" id="s6-safety-stage">
+            <span class="eyebrow"><b>05 / 安全性</b></span>
+            <h2 class="h" style="margin-top: 18px; font-size: 72px">
+              agent に任せても、操られない
+            </h2>
+            <ul id="s6-safety-list">
+              <li>
+                記録用カレンダーは「事実」、起動用カレンダーは「命令」。命令として読むのは allowlist
+                の作成者の予定だけ
+              </li>
+              <li>記録用の notes は信頼しないデータとして囲んで渡す</li>
+              <li>agent はカレンダーに直接書けない。副作用はすべて承認待ちを経る</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <script>
+        const tl = gsap.timeline({ paused: true });
+        const ease = "power4.out";
+        const enter = (sel, t) =>
+          tl.fromTo(sel, { x: 160, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease }, t);
+        const exit = (sel, end) =>
+          tl.to(sel, { x: -160, opacity: 0, duration: 0.45, ease: "power4.in" }, end - 0.45);
+        const reveal = (sel, t, y = 24) =>
+          tl.fromTo(
+            sel,
+            { y, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.6, ease, stagger: 0.12 },
+            t,
+          );
+
+        enter("#s6-safety-stage", 0);
+        reveal("#s6-safety-list li:nth-child(1)", 1.0);
+        reveal("#s6-safety-list li:nth-child(2)", 6.3);
+        reveal("#s6-safety-list li:nth-child(3)", 11.7);
+        exit("#s6-safety-stage", 18);
+        window.__timelines["s6-safety"] = tl;
+      </script>
+    </template>
+  </body>
+</html>

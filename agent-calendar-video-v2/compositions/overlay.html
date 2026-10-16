@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>overlay</title>
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+        }
+      </style>
+      <div id="root" data-composition-id="overlay" data-width="1920" data-height="1080">
+        <div id="gbar">
+          <i style="background: #4285f4"></i><i style="background: #ea4335"></i><i style="background: #fbbc04"></i><i style="background: #34a853"></i>
+        </div>
+        <div id="chapters">
+          <div class="ch"><b id="ch1"></b></div>
+          <div class="ch"><b id="ch2"></b></div>
+          <div class="ch"><b id="ch3"></b></div>
+          <div class="ch"><b id="ch4"></b></div>
+          <div class="ch"><b id="ch5"></b></div>
+          <div class="ch"><b id="ch6"></b></div>
+          <div class="ch"><b id="ch7"></b></div>
+        </div>
+      </div>
+      <script>
+        (function () {
+          const tl = gsap.timeline({ paused: true });
+          gsap.set("#chapters", { opacity: 0 });
+          tl.to("#chapters", { opacity: 1, duration: 0.3 }, 10);
+          tl.to("#chapters", { opacity: 0, duration: 0.3 }, 179.2);
+          // 章の目印: 課題〜次に作るものの 7 章。各章の間、そのバーが左から満ちる
+          const chapters = [
+            [10, 38],
+            [38, 58],
+            [58, 86],
+            [86, 138.5],
+            [138.5, 156.5],
+            [156.5, 172.5],
+            [172.5, 179.5],
+          ];
+          chapters.forEach(([a, b], i) => {
+            tl.fromTo(
+              "#ch" + (i + 1),
+              { scaleX: 0 },
+              { scaleX: 1, duration: b - a, ease: "none" },
+              a,
+            );
+          });
+          window.__timelines["overlay"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1920, height=1080" />
+<title>agent-calendar outro</title>
+<script src="gsap.min.js"></script>
+<style>
+@font-face{font-family:"Hiragino Sans";src:local("Hiragino Sans")}
+@font-face{font-family:"Hiragino Kaku Gothic ProN";src:local("Hiragino Kaku Gothic ProN")}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#0f0b16;color:#f0eaf7;
+font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif}
+#root{position:absolute;inset:0;background:#0f0b16;
+background-image:radial-gradient(#241c30 1.5px,transparent 1.5px);background-size:24px 24px}
+.scene{position:absolute;inset:0;opacity:0;padding:110px 140px}
+.kicker{font-family:Menlo,monospace;font-size:26px;color:#a855f7;letter-spacing:.12em}
+h2{font-size:64px;font-weight:500;margin-top:18px;line-height:1.3}
+.rows{margin-top:56px;display:flex;flex-direction:column;gap:26px}
+.row{display:flex;gap:28px;align-items:center;border:1px solid #3c3050;border-radius:16px;padding:26px 34px;background:#16101f;font-size:40px;line-height:1.4}
+.num{font-family:Menlo,monospace;color:#d9b3ff;font-size:30px;min-width:60px}
+.arch{position:absolute;left:50%;top:275px;transform:translateX(-50%);width:1060px;border:1px solid #3c3050;border-radius:16px}
+.cap{position:absolute;left:0;right:0;bottom:56px;text-align:center;font-size:34px;line-height:1.5}
+.cap span{background:rgba(15,11,22,.85);padding:10px 26px;border-radius:8px}
+.flow{margin-top:80px;display:flex;align-items:center;gap:40px;justify-content:center}
+.box{border:1px solid #3c3050;border-radius:16px;background:#16101f;padding:40px 44px;font-size:38px;text-align:center;line-height:1.5}
+.box small{display:block;font-size:26px;color:#9e93ac}
+.arrow{font-size:60px;color:#a855f7}
+.title{position:absolute;left:0;right:0;top:330px;text-align:center}
+.brand{font-family:Menlo,monospace;font-size:140px;font-weight:500;color:#f0eaf7}
+.brand b{color:#a855f7;font-weight:500}
+.tag{margin-top:50px;font-size:46px;line-height:1.6;color:#f0eaf7}
+.bar{width:0;height:4px;background:#a855f7;margin:40px auto 0}
+.chain{margin-top:60px;display:grid;grid-template-columns:repeat(4,1fr);gap:34px 40px}
+.step{border:1px solid #3c3050;border-radius:16px;background:#16101f;padding:28px 30px;font-size:31px;line-height:1.5;position:relative}
+.step .num{display:block;font-size:24px;margin-bottom:8px}
+.step small{display:block;font-size:24px;color:#9e93ac;margin-top:6px}
+.route{margin-top:50px;display:grid;grid-template-columns:420px 120px 1fr;gap:0;align-items:center}
+.branches{display:flex;flex-direction:column;gap:40px}
+.br{border:1px solid #3c3050;border-radius:16px;background:#16101f;padding:30px 36px;font-size:34px;line-height:1.5}
+.br .tag2{font-family:Menlo,monospace;font-size:24px;color:#a855f7;letter-spacing:.1em}
+.br small{display:block;font-size:26px;color:#9e93ac}
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="50" data-width="1920" data-height="1080">
+  <div id="s1" class="scene">
+    <div class="kicker">SAFETY</div>
+    <h2>カレンダーを入口にしても、勝手には動かない</h2>
+    <div class="rows">
+      <div class="row r1"><span class="num">01</span>記録用の予定は「事実」、起動用の予定は「命令」と分ける</div>
+      <div class="row r2"><span class="num">02</span>命令として読むのは、allowlist の作成者が書いた起動用の予定だけ</div>
+      <div class="row r3"><span class="num">03</span>notes は信頼しない入力として扱う</div>
+      <div class="row r4"><span class="num">04</span>agent の書き込みは、承認待ちを経てから反映する</div>
+    </div>
+  </div>
+  <div id="s2" class="scene">
+    <div class="kicker">ARCHITECTURE</div>
+    <h2>Google Cloud の上で動く</h2>
+    <img class="arch" src="architecture.png" alt="architecture" />
+    <div class="cap"><span>Cloud Scheduler → Cloud Run → Calendar API で予定を読み、Vertex AI Gemini が判断、Firestore に記録</span></div>
+  </div>
+  <div id="s2b" class="scene">
+    <div class="kicker">ARCHITECTURE · FLOW</div>
+    <h2>1 分ごとに予定を読み、agent を起動して記録する</h2>
+    <div class="chain">
+      <div class="step c1"><span class="num">01</span>Google Calendar<small>起動用・記録用の 2 つ</small></div>
+      <div class="step c2"><span class="num">02</span>Cloud Scheduler<small>1 分ごとに /tick</small></div>
+      <div class="step c3"><span class="num">03</span>Cloud Run の runner<small>syncToken で差分を取得し Firestore に保存</small></div>
+      <div class="step c4"><span class="num">04</span>発火予定を計算<small>allowlist の作成者の<br>起動用の予定だけ</small></div>
+      <div class="step c5"><span class="num">05</span>Vertex AI Gemini<small>agent を起動</small></div>
+      <div class="step c6"><span class="num">06</span>Firestore<small>実行記録と承認待ち</small></div>
+      <div class="step c7"><span class="num">07</span>dashboard<small>記録を見て、提案を承認する</small></div>
+    </div>
+  </div>
+  <div id="s3" class="scene">
+    <div class="kicker">NEXT</div>
+    <h2>次に作るもの：書いた言葉で、動く場所を振り分ける</h2>
+    <div class="route">
+      <div class="box b1">カレンダーに<br>自然言語で書く<small>自然言語で判定</small></div>
+      <div class="arrow a1" style="text-align:center">→</div>
+      <div class="branches">
+        <div class="br b2"><span class="tag2">CLOUD</span><br>Cloud Run Job の使い捨て sandbox<small>権限も key も持たせない</small></div>
+        <div class="br b3"><span class="tag2">LOCAL</span><br>自分の Mac の worker が Firestore から受け取る<small>orca で codex・claude を起動</small></div>
+      </div>
+    </div>
+  </div>
+  <div id="s4" class="scene">
+    <div class="title">
+      <div class="brand">agent<b>-</b>calendar</div>
+      <div class="bar"></div>
+      <div class="tag">予定と締切を書いておくと、<br>agent が準備と定期の仕事を自分で始める</div>
+    </div>
+  </div>
+</div>
+<script>
+window.__timelines = window.__timelines || {};
+const tl = gsap.timeline({ paused: true });
+const show=(id,t,d)=>{tl.fromTo(id,{opacity:0},{opacity:1,duration:.5,ease:"power2.out"},t);tl.to(id,{opacity:0,duration:.5,ease:"power2.in"},t+d-.5);};
+const up=(sel,t,o)=>tl.from(sel,Object.assign({y:30,opacity:0,duration:.6,ease:"power3.out"},o||{}),t);
+show("#s1",0,10); show("#s2",10,10); show("#s2b",20,15); show("#s3",35,8);
+tl.fromTo("#s4",{opacity:0},{opacity:1,duration:.6,ease:"power2.out"},43);
+tl.set({}, {}, 50);
+up("#s1 .kicker",.2); up("#s1 h2",.35);
+[".r1",".r2",".r3",".r4"].forEach((s,i)=>up(s,.9+i*1.7,{x:-40,y:0}));
+up("#s2 h2",10.2); up(".arch",10.6,{y:40,duration:.8}); up(".cap",12,{y:0});
+up("#s2b .kicker",20.2); up("#s2b h2",20.35);
+[".c1",".c2",".c3",".c4",".c5",".c6",".c7"].forEach((s,i)=>up(s,21+i*1.6));
+up("#s3 h2",35.2);
+[".b1",".a1",".b2",".b3"].forEach((s,i)=>up(s,35.7+i*0.9));
+up(".brand",43.3,{y:40,duration:.8});
+tl.to(".bar",{width:520,duration:1,ease:"power3.out"},44);
+up(".tag",44.8,{y:20,duration:.8});
+window.__timelines["main"] = tl;
+</script>
+</body>
+</html>

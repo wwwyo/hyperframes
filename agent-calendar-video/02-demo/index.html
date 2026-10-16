@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>02 Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Hiragino Sans"; src: local("Hiragino Sans"); }
+      @font-face { font-family: "Hiragino Kaku Gothic ProN"; src: local("Hiragino Kaku Gothic ProN"); }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body {
+        width: 1920px; height: 1080px; overflow: hidden;
+        background: #0f0b16;
+        font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+        color: #f0eaf7;
+      }
+      #root { position: relative; width: 1920px; height: 1080px; background: #0f0b16; overflow: hidden; }
+      #shot {
+        position: absolute; left: 0; top: 0; width: 1280px; height: 1500px;
+        transform-origin: 0 0; border-radius: 12px;
+        box-shadow: 0 0 0 1px #3c3050, 0 30px 80px rgba(0,0,0,0.6);
+      }
+      #dim { position: absolute; inset: 0; background: #0f0b16; opacity: 0; }
+      .hl {
+        position: absolute; border: 4px solid #a855f7; border-radius: 14px; opacity: 0;
+        box-shadow: 0 0 0 9999px rgba(15,11,22,0.35);
+      }
+      #runlog {
+        position: absolute; left: 360px; top: 150px; width: 1200px; padding: 48px 56px;
+        background: #16101f; border: 1px solid #3c3050; border-radius: 16px; opacity: 0;
+      }
+      #runlog h2 { font-size: 40px; color: #d9b3ff; margin-bottom: 36px; font-weight: 700; }
+      .row { display: flex; gap: 32px; align-items: baseline; padding: 22px 0; border-top: 1px solid #2a2137; opacity: 0; }
+      .row .k { width: 260px; font-size: 32px; color: #a855f7; font-weight: 700; }
+      .row .v { font-size: 32px; color: #f0eaf7; }
+      #caps { position: absolute; left: 0; right: 0; bottom: 0; height: 200px;
+        background: linear-gradient(to top, rgba(15,11,22,0.96) 60%, rgba(15,11,22,0)); }
+      .cap {
+        position: absolute; left: 0; right: 0; bottom: 64px; text-align: center;
+        font-size: 50px; font-weight: 700; letter-spacing: 0.02em; opacity: 0;
+      }
+      .cap em { font-style: normal; color: #d9b3ff; }
+      #step {
+        position: absolute; left: 64px; top: 52px; font-size: 28px; color: #9e93ac;
+        padding: 10px 22px; border: 1px solid #3c3050; border-radius: 999px; background: #16101f;
+      }
+      #step b { color: #a855f7; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="80" data-width="1920" data-height="1080">
+      <img id="shot" src="dashboard.png" alt="" />
+      <div id="hl" class="hl"></div>
+      <div id="dim"></div>
+      <div id="runlog">
+        <h2>実行記録</h2>
+        <div class="row" id="r1"><span class="k">入力</span><span class="v">締切「確定申告」と notes の準備指示</span></div>
+        <div class="row" id="r2"><span class="k">tool 呼び出し</span><span class="v">予定の検索 → 予定追加の提案</span></div>
+        <div class="row" id="r3"><span class="k">出力</span><span class="v">準備タスク 3 件を承認待ちへ</span></div>
+      </div>
+      <div id="caps"></div>
+      <div id="step"><b id="stepn">1 / 4</b>　<span id="stept">締切を書く</span></div>
+      <div class="cap" id="c1">記録用カレンダーに<em>締切</em>を書く</div>
+      <div class="cap" id="c2">notes に<em>「準備: 30日前」</em>と一行添えるだけ</div>
+      <div class="cap" id="c3">準備期間に入っていれば<em>遅れて登録</em>として扱う</div>
+      <div class="cap" id="c4"><em>1 分以内</em>に準備の agent が起動する</div>
+      <div class="cap" id="c5">agent が何をしたかは<em>実行記録</em>に残る</div>
+      <div class="cap" id="c6"><em>入力・tool 呼び出し・出力</em>を順に確認できる</div>
+      <div class="cap" id="c7">agent の提案はカレンダーに直接書かれず<em>承認待ち</em>に入る</div>
+      <div class="cap" id="c8">内容を見て<em>「承認して追加」</em>を押す</div>
+      <div class="cap" id="c9">承認したものだけが<em>記録用カレンダー</em>に入る</div>
+      <div class="cap" id="c10">定期の仕事は<em>起動用カレンダー</em>に繰り返し予定で置く</div>
+      <div class="cap" id="c11">次の発火予定は<em>1 分ごと</em>に差分を取って更新</div>
+      <div class="cap" id="c12">開始時刻になると<em>定期の仕事</em>が発火する</div>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      // focus region (x,y,w,h in image px) into the area above the caption band
+      function view(x, y, w, h) {
+        const z = Math.min(1700 / w, 820 / h, 2.2);
+        return { scale: z, x: 960 - (x + w / 2) * z, y: 470 - (y + h / 2) * z };
+      }
+      function hl(x, y, w, h) {
+        const v = view(x, y, w, h);
+        return { left: v.x + x * v.scale - 12, top: v.y + y * v.scale - 12, width: w * v.scale + 24, height: h * v.scale + 24 };
+      }
+      const ov = view(0, 0, 1280, 1500);
+      gsap.set("#shot", { ...view(100, 0, 1080, 520) });
+      gsap.set("#hl", { left: 0, top: 0, width: 0, height: 0 });
+
+      function cap(id, t, d) {
+        tl.fromTo(id, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, t);
+        tl.to(id, { opacity: 0, duration: 0.3 }, t + d - 0.3);
+      }
+      function focus(t, r, dur) {
+        tl.to("#shot", { ...view(...r), duration: dur, ease: "power3.inOut" }, t);
+        tl.set("#hl", { ...hl(...r), opacity: 0 }, t + dur);
+        tl.to("#hl", { opacity: 1, duration: 0.4 }, t + dur);
+      }
+      function unfocus(t) { tl.to("#hl", { opacity: 0, duration: 0.3 }, t); }
+      function step(t, n, label) {
+        tl.set("#stepn", { textContent: n + " / 4" }, t);
+        tl.set("#stept", { textContent: label }, t);
+      }
+
+      // 1. 締切を書く → 遅れて登録 → 1分以内に準備 agent
+      step(0, 1, "締切を書く");
+      focus(0.5, [468, 130, 344, 116], 1.6);
+      cap("#c1", 0.5, 5);
+      cap("#c2", 5.5, 5);
+      cap("#c3", 10.5, 4.5);
+      unfocus(14.6);
+      focus(14.8, [695, 320, 470, 320], 1.4);
+      cap("#c4", 15, 5);
+      unfocus(19.6);
+
+      // 2. 実行記録
+      step(20, 2, "実行記録を見る");
+      tl.to("#dim", { opacity: 0.9, duration: 0.6 }, 20);
+      tl.fromTo("#runlog", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 20.3);
+      tl.to("#r1", { opacity: 1, duration: 0.4 }, 25);
+      tl.to("#r2", { opacity: 1, duration: 0.4 }, 28.5);
+      tl.to("#r3", { opacity: 1, duration: 0.4 }, 32);
+      cap("#c5", 20.3, 4.7);
+      cap("#c6", 25, 14.5);
+      tl.to("#runlog", { opacity: 0, duration: 0.5 }, 39.3);
+      tl.to("#dim", { opacity: 0, duration: 0.6 }, 39.4);
+
+      // 3. 承認待ち → 承認 → 記録用カレンダー
+      step(40, 3, "承認する");
+      focus(40, [695, 265, 470, 380], 1.6);
+      cap("#c7", 40.3, 6);
+      unfocus(46);
+      focus(46.2, [700, 320, 460, 150], 1.4);
+      cap("#c8", 46.5, 6.5);
+      unfocus(53);
+      focus(53.2, [695, 1300, 470, 200], 1.6);
+      cap("#c9", 53.5, 6.3);
+      unfocus(59.7);
+
+      // 4. 起動用カレンダー → 定期の仕事が発火
+      step(60, 4, "定期の仕事");
+      focus(60, [116, 130, 344, 116], 1.6);
+      cap("#c10", 60.3, 6.5);
+      unfocus(66.8);
+      focus(67, [116, 265, 562, 235], 1.4);
+      cap("#c11", 67.3, 6);
+      cap("#c12", 73.3, 6.2);
+      unfocus(78.5);
+      tl.to("#shot", { ...view(0, 0, 1280, 700), duration: 1.4, ease: "power2.inOut" }, 78.4);
+      tl.set({}, {}, 80);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>冒頭</title>
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+        }
+        /* ---------- 1 冒頭 ---------- */
+        #s1 .stage {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0 160px 120px;
+        }
+        .slab {
+          position: relative;
+          overflow: hidden;
+          width: 1500px;
+          padding: 112px 96px 132px;
+          border-radius: 28px;
+          background: var(--primary);
+          color: var(--primary-foreground);
+          box-shadow: inset 2px 10px 10px rgba(255, 255, 255, 0.2);
+        }
+        .slab-fx {
+          position: absolute;
+          inset: 0;
+          background:
+            radial-gradient(
+              60% 90% at 50% 50%,
+              color-mix(in srgb, var(--primary-hover) 60%, transparent),
+              transparent 70%
+            ),
+            radial-gradient(circle, rgba(255, 255, 255, 0.24) 1.4px, transparent 1.4px) 0 0 / 18px
+              18px;
+        }
+        .slab-glare {
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 38%;
+          filter: blur(6px);
+          background:
+            radial-gradient(22% 100% at 50% 100%, var(--glow-2), transparent 66%),
+            radial-gradient(50% 100% at 50% 100%, var(--glow-1), transparent 74%);
+        }
+        .slab-body {
+          position: relative;
+          display: grid;
+          gap: 28px;
+        }
+        .slab .event {
+          font-family: var(--font-mono);
+          font-size: 26px;
+          letter-spacing: 0.04em;
+        }
+        .wordmark {
+          font-size: 150px;
+          line-height: 1;
+          letter-spacing: -0.025em;
+        }
+        .slab .lede {
+          font-size: 44px;
+          line-height: 1.5;
+        }
+      </style>
+      <div
+        id="root"
+        data-composition-id="s1-opening"
+        data-width="1920"
+        data-height="1080"
+        data-duration="8"
+      >
+        <div id="s1" class="scene">
+          <div class="stage" id="s1-stage">
+            <div class="slab" id="s1-slab">
+              <div class="slab-fx"></div>
+              <div class="slab-glare"></div>
+              <div class="slab-body">
+                <span class="event" id="s1-event">第5回 Agentic AI Hackathon · Zenn</span>
+                <span class="h wordmark" id="s1-word">agent-calendar</span>
+                <span class="lede" id="s1-lede"
+                  >予定と締切を書いておくと、agent が準備と定期の仕事を自分で始める</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <script>
+        const tl = gsap.timeline({ paused: true });
+        const ease = "power4.out";
+        // 継ぎ目: 流れは左。前のシーンは左へ加速して抜け、次は右から減速して入る
+        const enter = (sel, t) =>
+          tl.fromTo(sel, { x: 160, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease }, t);
+        const exit = (sel, end) =>
+          tl.to(sel, { x: -160, opacity: 0, duration: 0.45, ease: "power4.in" }, end - 0.45);
+        // 中身の段階的な出現（語りの拍に合わせる）
+        const reveal = (sel, t, y = 24) =>
+          tl.fromTo(
+            sel,
+            { y, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.6, ease, stagger: 0.12 },
+            t,
+          );
+
+        tl.fromTo(
+          "#s1-slab",
+          { clipPath: "inset(46% 0% 46% 0% round 28px)" },
+          { clipPath: "inset(0% 0% 0% 0% round 28px)", duration: 0.9, ease },
+          0.15,
+        );
+        reveal(["#s1-event", "#s1-word", "#s1-lede"], 0.6);
+        exit("#s1-stage", 8);
+
+        window.__timelines["s1-opening"] = tl;
+      </script>
+    </template>
+  </body>
+</html>

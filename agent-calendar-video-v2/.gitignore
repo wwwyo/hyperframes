@@ -1,0 +1,6 @@
+src-fonts/*.ttf
+assets/demo/raw*/
+assets/demo/*.mp4
+out/
+.hyperframes/
+snapshots*/
