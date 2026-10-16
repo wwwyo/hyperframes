@@ -72,6 +72,38 @@ describe("check-large-files", () => {
   // script carried on with an empty path: every `>> "$violations"` wrote
   // nowhere, `[ -s "" ]` read as "no violations", and the hook reported ✔️ on a
   // commit it never scanned. A gate that cannot run must fail, not pass.
+  it("still scans when $TMPDIR writes are denied, via a workspace-local scratch dir", () => {
+    withFiles({ "big.bin": bigBinary }, ({ "big.bin": path }) => {
+      const realMktemp = spawnSync("sh", ["-c", "command -v mktemp"], {
+        encoding: "utf-8",
+      }).stdout.trim();
+      const fakeBin = mkdtempSync(join(tmpdir(), "hf-denytmp-"));
+      writeFileSync(
+        join(fakeBin, "mktemp"),
+        // Deny the no-template form (writes outside the workspace), delegate the
+        // explicit-template form (writes inside it) — an agent sandbox.
+        `#!/bin/sh\nif [ "$#" -eq 0 ]; then echo 'mktemp: Operation not permitted' >&2; exit 1; fi\nexec ${realMktemp} "$@"\n`,
+        { mode: 0o755 },
+      );
+      const workspace = mkdtempSync(join(tmpdir(), "hf-sandbox-ws-"));
+      try {
+        const result = spawnSync(SCRIPT, [path], {
+          cwd: workspace,
+          encoding: "utf-8",
+          env: { ...process.env, PATH: `${fakeBin}:${process.env.PATH}` },
+        });
+        // The scan ran through the fallback: it found the file, rather than
+        // failing closed on a temp file it could not create.
+        assert.notEqual(result.status, 0);
+        assert.match(result.stderr, /big\.bin/);
+        assert.doesNotMatch(result.stderr, /could not create a temporary file/);
+      } finally {
+        rmSync(fakeBin, { recursive: true, force: true });
+        rmSync(workspace, { recursive: true, force: true });
+      }
+    });
+  });
+
   it("fails closed when it cannot create its temp file", () => {
     withFiles({ "big.bin": bigBinary }, ({ "big.bin": path }) => {
       const fakeBin = mkdtempSync(join(tmpdir(), "hf-nomktemp-"));
