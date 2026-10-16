@@ -20,7 +20,13 @@ if (mode === "browser") {
   result = await ensureBrowser(input);
 } else if (mode === "lint") {
   // Nobody waits on a background lint the way they wait on a Studio boot, so it takes idle CPU only.
-  setPriority(constants.priority.PRIORITY_LOW);
+  // Best-effort: an agent sandbox denies the priority syscall (EPERM from uv_os_setpriority), and
+  // this worker backs the render's lint gate — a niceness hint must not abort the render.
+  try {
+    setPriority(constants.priority.PRIORITY_LOW);
+  } catch {
+    // Keep the inherited priority; the lint itself is unaffected.
+  }
   result = await lintProject(
     input.projectDir,
     input.entryFile,
