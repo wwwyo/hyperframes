@@ -59,3 +59,7 @@ examples/docs-reference-project/**/*.wav filter=lfs diff=lfs merge=lfs -text
 .agent/fudoki-odh-final-motion/**/*.png filter=lfs diff=lfs merge=lfs -text
 .agent/fudoki-odh-final-motion/**/*.ttf filter=lfs diff=lfs merge=lfs -text
 .agent/fudoki-odh-final-motion/**/*.otf filter=lfs diff=lfs merge=lfs -text
+
+# Agent Calendar 提出用デモ動画の最終組み立て。レンダー済み mp4 とスクリーンショットは LFS に送る。
+agent-calendar-video/**/*.mp4 filter=lfs diff=lfs merge=lfs -text
+agent-calendar-video/**/*.png filter=lfs diff=lfs merge=lfs -text
