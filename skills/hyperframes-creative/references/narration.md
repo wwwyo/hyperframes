@@ -9,6 +9,21 @@ How to write narration scripts for video compositions. Read when the composition
 - Leave room for pauses. Silence between sentences is a feature, not dead air
 - The script should feel SHORTER than the video — visual breathing room matters
 
+### Picture-locked scenes
+
+The pacing above runs script-first: the words are written, then the frames take
+their duration from the voice. When a scene's length is fixed by its picture
+instead — a captured demo or screen recording that has to play through, existing
+footage, a live walkthrough — the budget runs the other way. Measure the picture
+first and give each stretch its own second window, then write that scene's words
+to `seconds × 2.5` less room to breathe. An overrun is fixed by rewriting the
+line, not by speeding up or cutting the footage.
+
+Synthesize only once those windows exist, and check each rendered line against
+its window. A demo whose narration lands at a third of its runtime means
+per-line regeneration — the take made before the windows were known was wasted
+work.
+
 ## Tone
 
 Write like a person, not a brochure:
