@@ -39,14 +39,22 @@ list_files() {
 # a pipeline subshell, so it cannot set a parent-shell flag). If the temp file
 # never appears, every `>> "$violations"` writes nowhere, `[ -s ... ]` at the end
 # reads as "no violations", and the hook reports success on a commit it never
-# scanned. Fail closed instead: an agent sandbox that denies writes outside the
-# workspace, a read-only or full $TMPDIR, or a broken mktemp on PATH are all
-# normal environments for this hook to run in.
-violations="$(mktemp)"
+# scanned. Fail closed instead.
+#
+# Try the system temp dir first, then a workspace-local scratch dir: an agent
+# sandbox commonly denies writes outside the workspace while allowing them inside
+# it, so `mktemp` alone fails there even though the workspace is writable. Falling
+# back lets the gate actually run instead of forcing every in-sandbox commit
+# through `--no-verify`; if both fail, abort (below).
+violations="$(mktemp 2>/dev/null)" || violations=""
+if [ ! -f "$violations" ]; then
+  mkdir -p ./tmp 2>/dev/null || true
+  violations="$(mktemp ./tmp/hf-largefiles.XXXXXX 2>/dev/null)" || violations=""
+fi
 if [ ! -f "$violations" ]; then
   echo "ERROR: could not create a temporary file for the large-file scan." >&2
-  echo "       mktemp gave '${violations}' — check \$TMPDIR. Refusing to report" >&2
-  echo "       success for a scan that did not run." >&2
+  echo "       tried \$TMPDIR and ./tmp — check \$TMPDIR and workspace write access." >&2
+  echo "       Refusing to report success for a scan that did not run." >&2
   exit 1
 fi
 trap 'rm -f "$violations"' EXIT INT TERM
