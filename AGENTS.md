@@ -4,13 +4,9 @@ Open-source video rendering framework: write HTML, render video.
 
 ## Skills
 
-This repo ships AI agent skills via [vercel-labs/skills](https://github.com/vercel-labs/skills). Install them before writing compositions — they encode framework-specific patterns that generic docs don't cover. **Default to the core set** (`/hyperframes`, `/hyperframes-cli`, `/hyperframes-registry`, `/media-use`, `/reverse-any-video`, `/style-sampling`); install everything only when the user explicitly asks for the full set.
+This is the HyperFrames **source checkout** (and plugin root), not a consumer project — the skills it ships already live in `skills/<name>/`. Read them from there before writing compositions; add only the workflow the task needs.
 
-```bash
-npx hyperframes skills update           # default: installs/refreshes the core set plus anything already installed
-npx hyperframes skills                  # all 9 published skills at once
-npx skills add heygen-com/hyperframes   # interactive picker (terminal only; repo-internal skills are excluded by default)
-```
+Do **not** run `hyperframes skills`, `hyperframes skills update`, or `npx skills add` here. The CLI hardcodes `--global` (`--dir` scopes only the prune), so it installs the **published upstream** `heygen-com/hyperframes` set into `~/.claude/skills` and `~/.agents/skills` — the dotfiles-managed global stores — even when the cwd is this repo, leaving dotfiles with a large unexpected diff. The router's install/update instructions are superseded by this local rule. Treat this checkout as a plugin installation and follow `skills/hyperframes/references/plugin-installation.md`; pass `HYPERFRAMES_SKIP_SKILLS=1` when running `init`.
 
 Make any video by asking for it; the `/hyperframes` skill carries the contract and the references (film, captions, overlays, motion, look). Read it first.
 
